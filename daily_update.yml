@@ -1,0 +1,35 @@
+# 이 파일을 깃허브 저장소의 .github/workflows/daily_update.yml 경로에 넣으세요.
+#
+# 매일 한국시간 오후 6시(=UTC 09:00)에 자동으로 실행되어
+# fetch_pension_data.py 를 돌리고, 결과 data.json을 저장소에 커밋합니다.
+
+name: 연기금 데이터 업데이트
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"   # 평일 UTC 09:00 = 한국시간 18:00
+  workflow_dispatch:         # 깃허브 화면에서 수동 실행 버튼도 생김
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 라이브러리 설치
+        run: pip install pykrx
+
+      - name: 데이터 수집
+        run: python fetch_pension_data.py
+
+      - name: 결과 커밋
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data.json
+          git commit -m "연기금 데이터 업데이트" || echo "변경 없음"
+          git push
