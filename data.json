@@ -4,52 +4,62 @@
     {
       "ticker": "005930",
       "name": "삼성전자",
-      "amount_eok": 358.7
+      "amount_eok": 358.7,
+      "streak_days": 2
     },
     {
       "ticker": "000150",
       "name": "두산",
-      "amount_eok": 160.6
+      "amount_eok": 160.6,
+      "streak_days": 2
     },
     {
       "ticker": "047050",
       "name": "포스코인터내셔널",
-      "amount_eok": 145.1
+      "amount_eok": 145.1,
+      "streak_days": 5
     },
     {
       "ticker": "329180",
       "name": "HD현대중공업",
-      "amount_eok": 92.2
+      "amount_eok": 92.2,
+      "streak_days": 1
     },
     {
       "ticker": "005830",
       "name": "DB손해보험",
-      "amount_eok": 85.5
+      "amount_eok": 85.5,
+      "streak_days": 2
     },
     {
       "ticker": "068270",
       "name": "셀트리온",
-      "amount_eok": 75.1
+      "amount_eok": 75.1,
+      "streak_days": 3
     },
     {
       "ticker": "373220",
       "name": "LG에너지솔루션",
-      "amount_eok": 71.7
+      "amount_eok": 71.7,
+      "streak_days": 4
     },
     {
       "ticker": "096770",
       "name": "SK이노베이션",
-      "amount_eok": 67.1
+      "amount_eok": 67.1,
+      "streak_days": 1
     },
     {
       "ticker": "051910",
       "name": "LG화학",
-      "amount_eok": 66.2
+      "amount_eok": 66.2,
+      "streak_days": 4
     },
     {
       "ticker": "079550",
       "name": "LIG디펜스앤에어로스페이스",
-      "amount_eok": 60.8
+      "amount_eok": 60.8,
+      "streak_days": 6
     }
   ],
   "top_sell": [
