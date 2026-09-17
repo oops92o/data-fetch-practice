@@ -69,14 +69,14 @@
       "amount_eok": -405.9
     },
     {
+      "ticker": "009150",
+      "name": "삼성전기",
+      "amount_eok": -186.3
+    },
+    {
       "ticker": "035420",
       "name": "NAVER",
       "amount_eok": -167.0
-    },
-    {
-      "ticker": "009150",
-      "name": "삼성전기",
-      "amount_eok": -166.6
     },
     {
       "ticker": "005380",
@@ -119,61 +119,61 @@
       "ticker": "010140",
       "name": "삼성중공업",
       "pension_eok": 53.5,
-      "foreign_eok": 229.2
+      "foreign_eok": 223.1
     },
     {
       "ticker": "079550",
       "name": "LIG디펜스앤에어로스페이스",
       "pension_eok": 60.8,
-      "foreign_eok": 202.1
+      "foreign_eok": 202.2
     },
     {
       "ticker": "000500",
       "name": "가온전선",
       "pension_eok": 0.4,
-      "foreign_eok": 177.2
+      "foreign_eok": 179.6
+    },
+    {
+      "ticker": "272210",
+      "name": "한화시스템",
+      "pension_eok": 45.7,
+      "foreign_eok": 120.5
     },
     {
       "ticker": "298040",
       "name": "효성중공업",
       "pension_eok": 7.8,
-      "foreign_eok": 151.0
-    },
-    {
-      "ticker": "272210",
-      "name": "한화시스템",
-      "pension_eok": 45.8,
-      "foreign_eok": 111.8
+      "foreign_eok": 154.3
     },
     {
       "ticker": "329180",
       "name": "HD현대중공업",
       "pension_eok": 92.2,
-      "foreign_eok": 47.1
+      "foreign_eok": 45.4
     },
     {
       "ticker": "067310",
       "name": "하나마이크론",
       "pension_eok": 10.0,
-      "foreign_eok": 125.7
+      "foreign_eok": 125.9
     },
     {
       "ticker": "042660",
       "name": "한화오션",
       "pension_eok": 50.0,
-      "foreign_eok": 64.3
+      "foreign_eok": 63.0
     },
     {
       "ticker": "082740",
       "name": "한화엔진",
-      "pension_eok": 27.9,
-      "foreign_eok": 75.6
+      "pension_eok": 28.1,
+      "foreign_eok": 67.0
     },
     {
       "ticker": "052690",
       "name": "한전기술",
       "pension_eok": 4.2,
-      "foreign_eok": 68.6
+      "foreign_eok": 71.6
     }
   ]
 }
