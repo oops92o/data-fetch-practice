@@ -72,11 +72,43 @@ for item in top_buy:
     item["streak_days"] = get_streak(item["ticker"])
 
 
-# ── 3. 저장 ─────────────────────────────────────────────────────────
+# ── 3. 외국인 쌍끌이 매칭 ────────────────────────────────────────────
+# 같은 날, 연기금도 외국인도 둘 다 순매수(+)인 종목만 추려서
+# 두 금액을 합친 순서로 정렬합니다.
+df_foreign = stock.get_market_net_purchases_of_equities(
+    target_date, target_date, market="ALL", investor="외국인"
+)
+
+pension_buy = df_sorted[df_sorted["순매수거래대금"] > 0]
+foreign_buy = df_foreign[df_foreign["순매수거래대금"] > 0]
+
+merged = pension_buy[["종목명", "순매수거래대금"]].join(
+    foreign_buy[["순매수거래대금"]],
+    how="inner",
+    lsuffix="_연기금",
+    rsuffix="_외국인",
+)
+merged["합산"] = merged["순매수거래대금_연기금"] + merged["순매수거래대금_외국인"]
+merged = merged.sort_values(by="합산", ascending=False)
+
+twin_buy = []
+for ticker, row in merged.head(10).iterrows():
+    twin_buy.append(
+        {
+            "ticker": ticker,
+            "name": row["종목명"],
+            "pension_eok": round(row["순매수거래대금_연기금"] / 1e8, 1),
+            "foreign_eok": round(row["순매수거래대금_외국인"] / 1e8, 1),
+        }
+    )
+
+
+# ── 4. 저장 ─────────────────────────────────────────────────────────
 data = {
     "date": target_date,
     "top_buy": top_buy,
     "top_sell": top_sell,
+    "twin_buy": twin_buy,
 }
 
 with open("data.json", "w", encoding="utf-8") as f:
