@@ -113,5 +113,67 @@
       "name": "삼성전자우",
       "amount_eok": -75.6
     }
+  ],
+  "twin_buy": [
+    {
+      "ticker": "010140",
+      "name": "삼성중공업",
+      "pension_eok": 53.5,
+      "foreign_eok": 229.2
+    },
+    {
+      "ticker": "079550",
+      "name": "LIG디펜스앤에어로스페이스",
+      "pension_eok": 60.8,
+      "foreign_eok": 202.1
+    },
+    {
+      "ticker": "000500",
+      "name": "가온전선",
+      "pension_eok": 0.4,
+      "foreign_eok": 177.2
+    },
+    {
+      "ticker": "298040",
+      "name": "효성중공업",
+      "pension_eok": 7.8,
+      "foreign_eok": 151.0
+    },
+    {
+      "ticker": "272210",
+      "name": "한화시스템",
+      "pension_eok": 45.8,
+      "foreign_eok": 111.8
+    },
+    {
+      "ticker": "329180",
+      "name": "HD현대중공업",
+      "pension_eok": 92.2,
+      "foreign_eok": 47.1
+    },
+    {
+      "ticker": "067310",
+      "name": "하나마이크론",
+      "pension_eok": 10.0,
+      "foreign_eok": 125.7
+    },
+    {
+      "ticker": "042660",
+      "name": "한화오션",
+      "pension_eok": 50.0,
+      "foreign_eok": 64.3
+    },
+    {
+      "ticker": "082740",
+      "name": "한화엔진",
+      "pension_eok": 27.9,
+      "foreign_eok": 75.6
+    },
+    {
+      "ticker": "052690",
+      "name": "한전기술",
+      "pension_eok": 4.2,
+      "foreign_eok": 68.6
+    }
   ]
 }
