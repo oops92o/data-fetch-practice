@@ -1,0 +1,107 @@
+{
+  "date": "20260917",
+  "top_buy": [
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "amount_eok": 358.7
+    },
+    {
+      "ticker": "000150",
+      "name": "두산",
+      "amount_eok": 160.6
+    },
+    {
+      "ticker": "047050",
+      "name": "포스코인터내셔널",
+      "amount_eok": 145.1
+    },
+    {
+      "ticker": "329180",
+      "name": "HD현대중공업",
+      "amount_eok": 92.2
+    },
+    {
+      "ticker": "005830",
+      "name": "DB손해보험",
+      "amount_eok": 85.5
+    },
+    {
+      "ticker": "068270",
+      "name": "셀트리온",
+      "amount_eok": 75.1
+    },
+    {
+      "ticker": "373220",
+      "name": "LG에너지솔루션",
+      "amount_eok": 71.7
+    },
+    {
+      "ticker": "096770",
+      "name": "SK이노베이션",
+      "amount_eok": 67.1
+    },
+    {
+      "ticker": "051910",
+      "name": "LG화학",
+      "amount_eok": 66.2
+    },
+    {
+      "ticker": "079550",
+      "name": "LIG디펜스앤에어로스페이스",
+      "amount_eok": 60.8
+    }
+  ],
+  "top_sell": [
+    {
+      "ticker": "402340",
+      "name": "SK스퀘어",
+      "amount_eok": -405.9
+    },
+    {
+      "ticker": "035420",
+      "name": "NAVER",
+      "amount_eok": -167.0
+    },
+    {
+      "ticker": "009150",
+      "name": "삼성전기",
+      "amount_eok": -166.6
+    },
+    {
+      "ticker": "005380",
+      "name": "현대차",
+      "amount_eok": -158.4
+    },
+    {
+      "ticker": "000270",
+      "name": "기아",
+      "amount_eok": -136.2
+    },
+    {
+      "ticker": "105560",
+      "name": "KB금융",
+      "amount_eok": -124.5
+    },
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "amount_eok": -110.9
+    },
+    {
+      "ticker": "011070",
+      "name": "LG이노텍",
+      "amount_eok": -106.4
+    },
+    {
+      "ticker": "017670",
+      "name": "SK텔레콤",
+      "amount_eok": -75.8
+    },
+    {
+      "ticker": "005935",
+      "name": "삼성전자우",
+      "amount_eok": -75.6
+    }
+  ]
+}
