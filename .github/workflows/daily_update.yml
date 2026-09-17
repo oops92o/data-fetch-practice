@@ -19,6 +19,9 @@ jobs:
         run: pip install pykrx
 
       - name: 데이터 수집
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
         run: python fetch_pension_data.py
 
       - name: 결과 커밋
