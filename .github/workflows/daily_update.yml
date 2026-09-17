@@ -2,8 +2,8 @@ name: 연기금 데이터 업데이트
 
 on:
   schedule:
-    - cron: "0 9 * * 1-5"   # 평일 UTC 09:00 = 한국시간 18:00
-  workflow_dispatch:         # 깃허브 화면에서 수동 실행 버튼도 생김
+    - cron: "0 9 * * 1-5"
+  workflow_dispatch: {}
 
 jobs:
   update:
