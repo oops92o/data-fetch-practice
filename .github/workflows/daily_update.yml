@@ -2,7 +2,8 @@ name: 연기금 데이터 업데이트
 
 on:
   schedule:
-    - cron: "0 9 * * 1-5"
+    - cron: "0 10 * * 1-5"  
+# 한국시간 19:00로 30분~1시간 늦춤
   workflow_dispatch: {}
 
 jobs:
