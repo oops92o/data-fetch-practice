@@ -15,11 +15,21 @@ from datetime import datetime, timedelta
 from pykrx import stock
 
 # ── 1. 오늘 기준 연기금 순매수 상위/하위 ────────────────────────────
-target_date = stock.get_nearest_business_day_in_a_week()
+# 아직 당일 데이터가 KRX에 안 올라온 경우(빈 데이터) 하루씩 거슬러 올라가며 재시도합니다.
+def fetch_with_fallback(investor: str, max_tries: int = 7):
+    date = stock.get_nearest_business_day_in_a_week()
+    for _ in range(max_tries):
+        result = stock.get_market_net_purchases_of_equities(
+            date, date, market="ALL", investor=investor
+        )
+        if not result.empty:
+            return date, result
+        prev = datetime.strptime(date, "%Y%m%d") - timedelta(days=1)
+        date = stock.get_nearest_business_day_in_a_week(prev.strftime("%Y%m%d"))
+    raise RuntimeError(f"{max_tries}일을 거슬러 올라가도 {investor} 데이터를 못 찾았습니다.")
 
-df = stock.get_market_net_purchases_of_equities(
-    target_date, target_date, market="ALL", investor="연기금"
-)
+
+target_date, df = fetch_with_fallback("연기금")
 df_sorted = df.sort_values(by="순매수거래대금", ascending=False)
 
 
