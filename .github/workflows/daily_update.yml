@@ -2,9 +2,18 @@ name: 연기금 데이터 업데이트
 
 on:
   schedule:
-    - cron: "0 10 * * 1-5"  
-# 한국시간 19:00로 30분~1시간 늦춤
+    # GitHub 예약 실행은 정각(:00)에 몰려서 몇 시간씩 늦어지므로 정각을 피하고,
+    # 늦어지거나 건너뛰는 날을 대비해 예비 실행 시각을 둔다.
+    # 데이터가 이미 최신이면 커밋 단계에서 "변경 없음"으로 끝난다.
+    - cron: "17 10 * * 1-5"   # 한국시간 19:17
+    - cron: "47 11 * * 1-5"   # 한국시간 20:47 (예비)
+    - cron: "17 13 * * 1-5"   # 한국시간 22:17 (예비)
   workflow_dispatch: {}
+
+# 지연된 실행이 한꺼번에 몰려도 하나씩 차례로 실행해 push 충돌을 막는다
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
 
 jobs:
   update:
@@ -23,7 +32,14 @@ jobs:
         env:
           KRX_ID: ${{ secrets.KRX_ID }}
           KRX_PW: ${{ secrets.KRX_PW }}
-        run: python fetch_pension_data.py
+        # KRX 로그인이 일시적으로 실패하는 경우가 있어 1분 간격으로 최대 3번 시도
+        run: |
+          for i in 1 2 3; do
+            python fetch_pension_data.py && break
+            if [ "$i" -eq 3 ]; then exit 1; fi
+            echo "실패, 60초 후 다시 시도합니다 ($i/3)"
+            sleep 60
+          done
 
       - name: 결과 커밋
         run: |
