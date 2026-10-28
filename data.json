@@ -1,179 +1,179 @@
 {
-  "date": "20261027",
+  "date": "20261028",
   "top_buy": [
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "amount_eok": 1205.5,
+      "streak_days": 6
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "amount_eok": 828.3,
+      "streak_days": 1
+    },
     {
       "ticker": "402340",
       "name": "SK스퀘어",
-      "amount_eok": 308.1,
-      "streak_days": 4
-    },
-    {
-      "ticker": "032830",
-      "name": "삼성생명",
-      "amount_eok": 197.2,
-      "streak_days": 8
-    },
-    {
-      "ticker": "028260",
-      "name": "삼성물산",
-      "amount_eok": 160.7,
+      "amount_eok": 669.7,
       "streak_days": 5
-    },
-    {
-      "ticker": "006400",
-      "name": "삼성SDI",
-      "amount_eok": 153.0,
-      "streak_days": 1
     },
     {
       "ticker": "034730",
       "name": "SK",
-      "amount_eok": 110.1,
+      "amount_eok": 310.5,
+      "streak_days": 7
+    },
+    {
+      "ticker": "032830",
+      "name": "삼성생명",
+      "amount_eok": 255.1,
+      "streak_days": 9
+    },
+    {
+      "ticker": "028260",
+      "name": "삼성물산",
+      "amount_eok": 208.0,
       "streak_days": 6
     },
     {
-      "ticker": "042700",
-      "name": "한미반도체",
-      "amount_eok": 94.0,
+      "ticker": "353200",
+      "name": "대덕전자",
+      "amount_eok": 144.2,
       "streak_days": 1
     },
     {
-      "ticker": "098460",
-      "name": "고영",
-      "amount_eok": 91.7,
-      "streak_days": 1
-    },
-    {
-      "ticker": "005935",
-      "name": "삼성전자우",
-      "amount_eok": 76.3,
-      "streak_days": 1
+      "ticker": "031980",
+      "name": "피에스케이홀딩스",
+      "amount_eok": 119.6,
+      "streak_days": 2
     },
     {
       "ticker": "222800",
       "name": "심텍",
-      "amount_eok": 65.8,
-      "streak_days": 2
+      "amount_eok": 91.1,
+      "streak_days": 3
     },
     {
-      "ticker": "018260",
-      "name": "삼성에스디에스",
-      "amount_eok": 61.4,
-      "streak_days": 4
+      "ticker": "373220",
+      "name": "LG에너지솔루션",
+      "amount_eok": 78.7,
+      "streak_days": 19
     }
   ],
   "top_sell": [
     {
-      "ticker": "005930",
-      "name": "삼성전자",
-      "amount_eok": -361.9
+      "ticker": "035420",
+      "name": "NAVER",
+      "amount_eok": -296.5
     },
     {
-      "ticker": "267260",
-      "name": "HD현대일렉트릭",
-      "amount_eok": -164.5
+      "ticker": "028670",
+      "name": "팬오션",
+      "amount_eok": -276.6
     },
     {
-      "ticker": "267270",
-      "name": "HD건설기계",
-      "amount_eok": -143.7
-    },
-    {
-      "ticker": "005380",
-      "name": "현대차",
-      "amount_eok": -136.8
+      "ticker": "011070",
+      "name": "LG이노텍",
+      "amount_eok": -163.7
     },
     {
       "ticker": "329180",
       "name": "HD현대중공업",
-      "amount_eok": -112.3
+      "amount_eok": -149.2
     },
     {
-      "ticker": "105560",
-      "name": "KB금융",
-      "amount_eok": -102.4
-    },
-    {
-      "ticker": "010950",
-      "name": "S-Oil",
-      "amount_eok": -87.0
-    },
-    {
-      "ticker": "033780",
-      "name": "KT&G",
-      "amount_eok": -80.1
-    },
-    {
-      "ticker": "034020",
-      "name": "두산에너빌리티",
-      "amount_eok": -78.2
-    },
-    {
-      "ticker": "086790",
-      "name": "하나금융지주",
-      "amount_eok": -68.7
-    }
-  ],
-  "twin_buy": [
-    {
-      "ticker": "006400",
-      "name": "삼성SDI",
-      "pension_eok": 153.0,
-      "foreign_eok": 85.8
+      "ticker": "012450",
+      "name": "한화에어로스페이스",
+      "amount_eok": -142.9
     },
     {
       "ticker": "005935",
       "name": "삼성전자우",
-      "pension_eok": 76.3,
-      "foreign_eok": 157.7
+      "amount_eok": -140.8
     },
     {
-      "ticker": "018260",
-      "name": "삼성에스디에스",
-      "pension_eok": 61.4,
-      "foreign_eok": 75.7
+      "ticker": "010950",
+      "name": "S-Oil",
+      "amount_eok": -138.6
     },
     {
-      "ticker": "298040",
-      "name": "효성중공업",
-      "pension_eok": 16.0,
-      "foreign_eok": 81.8
+      "ticker": "267260",
+      "name": "HD현대일렉트릭",
+      "amount_eok": -113.8
     },
     {
-      "ticker": "003670",
-      "name": "포스코퓨처엠",
-      "pension_eok": 11.5,
-      "foreign_eok": 80.3
+      "ticker": "443060",
+      "name": "HD현대마린솔루션",
+      "amount_eok": -102.5
+    },
+    {
+      "ticker": "267270",
+      "name": "HD건설기계",
+      "amount_eok": -78.1
+    }
+  ],
+  "twin_buy": [
+    {
+      "ticker": "000660",
+      "name": "SK하이닉스",
+      "pension_eok": 1205.5,
+      "foreign_eok": 3744.6
+    },
+    {
+      "ticker": "005930",
+      "name": "삼성전자",
+      "pension_eok": 828.3,
+      "foreign_eok": 3640.8
     },
     {
       "ticker": "064400",
       "name": "LG씨엔에스",
-      "pension_eok": 56.3,
-      "foreign_eok": 32.4
+      "pension_eok": 67.0,
+      "foreign_eok": 188.7
     },
     {
-      "ticker": "119850",
-      "name": "지엔씨에너지",
-      "pension_eok": 0.9,
-      "foreign_eok": 84.4
+      "ticker": "108490",
+      "name": "로보티즈",
+      "pension_eok": 30.7,
+      "foreign_eok": 108.0
     },
     {
-      "ticker": "080220",
-      "name": "제주반도체",
-      "pension_eok": 1.6,
-      "foreign_eok": 75.4
+      "ticker": "010170",
+      "name": "대한광통신",
+      "pension_eok": 7.5,
+      "foreign_eok": 101.5
     },
     {
-      "ticker": "096770",
-      "name": "SK이노베이션",
-      "pension_eok": 14.3,
-      "foreign_eok": 47.7
+      "ticker": "352820",
+      "name": "하이브",
+      "pension_eok": 12.7,
+      "foreign_eok": 92.9
     },
     {
-      "ticker": "058470",
-      "name": "리노공업",
-      "pension_eok": 7.4,
-      "foreign_eok": 51.7
+      "ticker": "018260",
+      "name": "삼성에스디에스",
+      "pension_eok": 56.6,
+      "foreign_eok": 46.9
+    },
+    {
+      "ticker": "000810",
+      "name": "삼성화재",
+      "pension_eok": 3.4,
+      "foreign_eok": 96.4
+    },
+    {
+      "ticker": "000500",
+      "name": "가온전선",
+      "pension_eok": 54.3,
+      "foreign_eok": 23.0
+    },
+    {
+      "ticker": "196170",
+      "name": "알테오젠",
+      "pension_eok": 13.6,
+      "foreign_eok": 52.7
     }
   ]
 }
