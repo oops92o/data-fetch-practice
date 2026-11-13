@@ -1,0 +1,42 @@
+name: 기간 누적·방향 전환 업데이트
+
+on:
+  schedule:
+    - cron: "40 10 * * 1-5"   # 한국시간 19:40 (기존 수집보다 40분 뒤)
+  workflow_dispatch: {}        # Actions 탭에서 손으로 실행할 수 있게
+
+jobs:
+  history:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 라이브러리 설치
+        run: pip install pykrx
+
+      - name: 20거래일 데이터 수집
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+        run: |
+          for i in 1 2 3; do
+            python fetch_history.py && exit 0
+            echo "실패 ($i/3), 5분 뒤 재시도"
+            sleep 300
+          done
+          exit 1
+
+      - name: 결과 커밋
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add history.json
+          git commit -m "기간 누적·방향 전환 업데이트" || echo "변경 없음"
+          git pull --rebase
+          git push
