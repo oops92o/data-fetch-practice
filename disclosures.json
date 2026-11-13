@@ -1,8 +1,8 @@
 {
- "updated": "2026-11-13 16:32",
+ "updated": "2026-11-13 16:43",
  "from": "20261109",
  "to": "20261113",
- "scanned": 2931,
+ "scanned": 2994,
  "counts": {
   "bad": 48,
   "earn": 77,
@@ -488,6 +488,18 @@
    "word": "전환사채권발행결정",
    "fix": true,
    "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001253"
+  },
+  {
+   "no": "20261113001161",
+   "date": "20261113",
+   "corp": "금호전기",
+   "code": "001210",
+   "market": "코스피",
+   "title": "[기재정정]주요사항보고서(유상증자결정)",
+   "tag": "bad",
+   "word": "유상증자결정",
+   "fix": true,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001161"
   },
   {
    "no": "20261113001053",
@@ -2396,18 +2408,6 @@
    "word": "감자결정",
    "fix": false,
    "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111800695"
-  },
-  {
-   "no": "20261111800670",
-   "date": "20261111",
-   "corp": "동양",
-   "code": "001520",
-   "market": "코스피",
-   "title": "투자유의안내              (동양 2우선주(신형) 시가총액요건 미달로 인한 상장폐지 우려 예고)",
-   "tag": "bad",
-   "word": "상장폐지",
-   "fix": false,
-   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111800670"
   }
  ]
 }
