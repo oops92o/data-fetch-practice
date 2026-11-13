@@ -7,19 +7,19 @@
    "key": "momentum",
    "name": "시장 모멘텀",
    "score": 2,
-   "detail": "125일 평균선 대비 -23.9%"
+   "detail": "125일 평균선 대비 -24.0%"
   },
   {
    "key": "breadth",
    "name": "시장 폭",
-   "score": 46,
-   "detail": "오른 종목 비율 48%"
+   "score": 47,
+   "detail": "오른 종목 비율 49%"
   },
   {
    "key": "highlow",
    "name": "신고가·신저가",
-   "score": 15,
-   "detail": "신고가 17종목, 신저가 93종목"
+   "score": 16,
+   "detail": "신고가 17종목, 신저가 92종목"
   },
   {
    "key": "volatility",
@@ -30,19 +30,19 @@
   {
    "key": "money",
    "name": "매수 거래대금",
-   "score": 78,
+   "score": 77,
    "detail": "오른 종목 거래대금 비중 61%"
   },
   {
    "key": "foreign",
    "name": "외국인 수급",
    "score": 76,
-   "detail": "최근 5일 순매수 +4,522억"
+   "detail": "최근 5일 순매수 +4,608억"
   }
  ],
  "kospi": {
-  "close": 5297.51,
-  "change_pct": -0.85
+  "close": 5290.53,
+  "change_pct": -0.98
  },
  "history": [
   {
