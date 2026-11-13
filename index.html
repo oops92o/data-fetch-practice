@@ -55,6 +55,9 @@
 
   /* 기간 고르는 알약 버튼 */
   .tabs{display:flex; gap:6px; margin-bottom:8px;}
+  /* 주체 고르는 버튼은 스크롤해도 화면 위에 붙어 있어요 */
+  .tabs.who{position:sticky; top:0; z-index:5; background:var(--bg); padding:10px 0; margin:6px 0 0;}
+  .tabs.who button{flex:1; font-weight:600; padding:9px 14px;}
   .tabs button{font:inherit; font-size:13.5px; padding:6px 14px; border:1px solid var(--line);
                background:var(--card); color:var(--ink); border-radius:999px; cursor:pointer;}
   .tabs button.on{background:var(--ink); color:var(--bg); border-color:var(--ink);}
@@ -76,20 +79,18 @@
 <p class="meta" id="meta">데이터 불러오는 중</p>
 <div id="alert"></div>
 
-<h2>연기금 순매수 상위 10</h2>
-<div class="card" id="topBuy"></div>
-<p class="note">이름 옆 숫자는 며칠째 계속 사고 있는지예요.</p>
+<!-- 누구의 매매를 볼지 고르는 버튼. 아래 구역들이 모두 이 선택을 따라가요. -->
+<div class="tabs who" id="whoTabs"></div>
 
-<h2>연기금 순매도 상위 10</h2>
-<div class="card" id="topSell"></div>
+<div id="main" hidden>
+  <h2><span class="who-name"></span> 순매수 상위 10</h2>
+  <div class="card" id="topBuy"></div>
 
-<h2>연기금·외국인 동시 매수</h2>
-<div class="card" id="twinBuy"></div>
-<p class="note">같은 날 둘 다 순매수한 종목이에요. 두 금액을 합친 순서로 정렬했어요.</p>
+  <h2><span class="who-name"></span> 순매도 상위 10</h2>
+  <div class="card" id="topSell"></div>
+  <p class="note">이름 옆 숫자는 같은 방향이 며칠째 이어지는지예요.</p>
 
-<!-- 아래 두 구역은 history.json이 있을 때만 보여요 -->
-<div id="historyArea" hidden>
-  <h2>연기금 기간 누적</h2>
+  <h2><span class="who-name"></span> 기간 누적</h2>
   <div class="tabs" id="cumTabs"></div>
   <h3>순매수</h3>
   <div class="card" id="cumBuy"></div>
@@ -97,12 +98,16 @@
   <div class="card" id="cumSell"></div>
   <p class="note" id="cumNote"></p>
 
-  <h2>연기금 방향 전환</h2>
+  <h2><span class="who-name"></span> 방향 전환</h2>
   <h3>매수로 전환</h3>
   <div class="card" id="turnBuy"></div>
   <h3>매도로 전환</h3>
   <div class="card" id="turnSell"></div>
   <p class="note" id="turnNote"></p>
+
+  <h2>연기금·외국인 동시 매수</h2>
+  <div class="card" id="twinBuy"></div>
+  <p class="note">같은 날 둘 다 순매수한 종목이에요. 두 금액을 합친 순서로 정렬했어요.</p>
 </div>
 
 <footer>
@@ -211,26 +216,6 @@ function drawTurn(hostId, items, label){
   });
 }
 
-// 기간 누적: 1주/1달 버튼을 만들고, 누르면 그 기간으로 다시 그려요.
-function setupCum(cum){
-  const periods = [{key:"week", label:"1주"}, {key:"month", label:"1달"}];
-  const tabs = document.getElementById("cumTabs");
-  function show(key){
-    drawList("cumBuy", cum[key].buy);
-    drawList("cumSell", cum[key].sell);
-    document.getElementById("cumNote").textContent =
-      "최근 " + cum[key].days + "거래일 동안 사고판 금액의 합이에요. 지금 들고 있는 양(보유 잔고)과는 달라요.";
-    [...tabs.children].forEach(b => b.className = (b.dataset.key === key ? "on" : ""));
-  }
-  periods.forEach(p => {
-    const b = el("button", "", p.label);
-    b.dataset.key = p.key;
-    b.onclick = () => show(p.key);
-    tabs.appendChild(b);
-  });
-  show("week");
-}
-
 // 데이터가 며칠 지났는지 확인해서, 오래됐으면 노란 안내를 띄워요.
 function checkFresh(dateStr){
   const d = new Date(prettyDate(dateStr) + "T00:00:00+09:00");
@@ -243,40 +228,84 @@ function checkFresh(dateStr){
 }
 
 // ───────────────────────── 시작 ─────────────────────────
-// data.json을 가져와요. 뒤에 붙인 ?t=... 는 옛날 파일이 캐시에서 나오지 않게 하는 장치예요.
-fetch("data.json?t=" + Date.now())
+let DATA = null;        // history.json 전체를 담아 둘 곳
+let who = "pension";    // 지금 보고 있는 주체
+let period = "week";    // 지금 보고 있는 누적 기간
+
+// 화면 전체를 지금 선택(who, period)에 맞춰 다시 그려요.
+function render(){
+  const inv = DATA.investors[who];
+
+  document.querySelectorAll(".who-name").forEach(n => n.textContent = inv.label);
+  [...document.getElementById("whoTabs").children]
+    .forEach(b => b.className = (b.dataset.key === who ? "on" : ""));
+  [...document.getElementById("cumTabs").children]
+    .forEach(b => b.className = (b.dataset.key === period ? "on" : ""));
+
+  drawList("topBuy", inv.today.buy);
+  drawList("topSell", inv.today.sell);
+
+  drawList("cumBuy", inv.cum[period].buy);
+  drawList("cumSell", inv.cum[period].sell);
+  document.getElementById("cumNote").textContent =
+    "최근 " + inv.cum[period].days + "거래일 동안 사고판 금액의 합이에요. 지금 들고 있는 양(보유 잔고)과는 달라요.";
+
+  drawTurn("turnBuy", inv.turn.to_buy, "매도");
+  drawTurn("turnSell", inv.turn.to_sell, "매수");
+  document.getElementById("turnNote").textContent =
+    "그 전에 " + DATA.settings.turn_min_days + "일 이상 반대로 하다가 오늘 " +
+    DATA.settings.turn_min_eok + "억 이상 방향을 바꾼 종목이에요.";
+
+  document.getElementById("meta").textContent =
+    "기준일 " + prettyDate(inv.date) + " 마감 확정치, 단위 억 원";
+}
+
+// 버튼 한 줄을 만들어요. 누르면 onPick(고른 키)가 실행돼요.
+function makeTabs(hostId, options, onPick){
+  const host = document.getElementById(hostId);
+  options.forEach(o => {
+    const b = el("button", "", o.label);
+    b.dataset.key = o.key;
+    b.onclick = () => onPick(o.key);
+    host.appendChild(b);
+  });
+}
+
+function showProblem(text){
+  document.getElementById("meta").textContent = "데이터를 불러오지 못했어요";
+  document.getElementById("alert").appendChild(el("div", "warn", text));
+}
+
+// history.json을 가져와요. 뒤에 붙인 ?t=... 는 옛날 파일이 캐시에서 나오지 않게 하는 장치예요.
+fetch("history.json?t=" + Date.now())
   .then(res => {
-    if(!res.ok) throw new Error("data.json 응답 코드 " + res.status);
+    if(!res.ok) throw new Error("응답 코드 " + res.status);
     return res.json();
   })
   .then(data => {
-    document.getElementById("meta").textContent =
-      "기준일 " + prettyDate(data.date) + " 마감 확정치, 단위 억 원";
-    checkFresh(data.date);
-    drawList("topBuy", data.top_buy);
-    drawList("topSell", data.top_sell);
-    drawTwin("twinBuy", data.twin_buy);
+    if(data.version !== 2 || !data.investors){
+      showProblem("history.json이 예전 형식이에요. Actions 탭에서 '기간 누적·방향 전환 업데이트'를 한 번 실행해 주세요.");
+      return;
+    }
+    DATA = data;
+    if(!DATA.investors[who]) who = Object.keys(DATA.investors)[0];
+
+    // 주체 버튼은 파일에 들어 있는 만큼 자동으로 생겨요 (기관을 추가하면 버튼도 늘어나요).
+    makeTabs("whoTabs",
+      Object.keys(DATA.investors).map(k => ({key:k, label:DATA.investors[k].label})),
+      key => { who = key; render(); });
+    makeTabs("cumTabs",
+      [{key:"week", label:"1주"}, {key:"month", label:"1달"}],
+      key => { period = key; render(); });
+
+    checkFresh(DATA.date);
+    drawTwin("twinBuy", DATA.twin);
+    render();
+    document.getElementById("main").hidden = false;
   })
   .catch(err => {
-    document.getElementById("meta").textContent = "데이터를 불러오지 못했어요";
-    const box = el("div", "warn",
-      "data.json을 읽지 못했어요 (" + err.message + "). 이 파일이 data.json과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
-    document.getElementById("alert").appendChild(box);
+    showProblem("history.json을 읽지 못했어요 (" + err.message + "). 파일이 index.html과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
   });
-
-// 두 번째 파일: history.json (기간 누적, 방향 전환). 없으면 그 구역만 조용히 숨겨 둬요.
-fetch("history.json?t=" + Date.now())
-  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
-  .then(h => {
-    setupCum(h.cum);
-    drawTurn("turnBuy", h.turn.to_buy, "매도");
-    drawTurn("turnSell", h.turn.to_sell, "매수");
-    document.getElementById("turnNote").textContent =
-      "그 전에 " + h.settings.turn_min_days + "일 이상 반대로 하다가 오늘 " +
-      h.settings.turn_min_eok + "억 이상 방향을 바꾼 종목이에요. 기준일 " + prettyDate(h.date) + ".";
-    document.getElementById("historyArea").hidden = false;
-  })
-  .catch(() => { /* history.json이 아직 없으면 아무것도 하지 않아요 */ });
 </script>
 </body>
 </html>
