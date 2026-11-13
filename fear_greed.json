@@ -1,31 +1,31 @@
 {
  "date": "20261113",
- "score": 42,
+ "score": 43,
  "label": "공포",
  "components": [
   {
    "key": "momentum",
    "name": "시장 모멘텀",
    "score": 2,
-   "detail": "125일 평균선 대비 -24.1%"
+   "detail": "125일 평균선 대비 -23.9%"
   },
   {
    "key": "breadth",
    "name": "시장 폭",
-   "score": 45,
+   "score": 46,
    "detail": "오른 종목 비율 48%"
   },
   {
    "key": "highlow",
    "name": "신고가·신저가",
-   "score": 14,
-   "detail": "신고가 17종목, 신저가 102종목"
+   "score": 15,
+   "detail": "신고가 17종목, 신저가 93종목"
   },
   {
    "key": "volatility",
    "name": "변동성",
    "score": 40,
-   "detail": "하루 평균 출렁임 3.31%"
+   "detail": "하루 평균 출렁임 3.30%"
   },
   {
    "key": "money",
@@ -41,13 +41,13 @@
   }
  ],
  "kospi": {
-  "close": 5282.65,
-  "change_pct": -1.12
+  "close": 5297.51,
+  "change_pct": -0.85
  },
  "history": [
   {
    "date": "20261113",
-   "score": 42
+   "score": 43
   }
  ]
 }
