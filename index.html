@@ -70,6 +70,23 @@
   .turn:last-child{border-bottom:none;}
   .turn .before{color:var(--sub); font-size:12.5px; white-space:nowrap;}
 
+  /* 주요 지수 한 줄 */
+  .idx-row{display:flex; gap:8px; margin-top:12px;}
+  .idx{flex:1; min-width:0; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 10px;}
+  .idx .k{font-size:12px; color:var(--sub);}
+  .idx .v{font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .idx .c{font-size:12.5px; font-weight:700;}
+
+  /* 업종 한 줄: 이름 | 가운데가 0인 막대 | 등락률 */
+  .sec{display:grid; grid-template-columns:104px 1fr 58px; gap:8px; align-items:center;
+       padding:7px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .sec:last-child{border-bottom:none;}
+  .sec .both{display:flex; height:10px;}
+  .sec .half{flex:1; display:flex; background:var(--track);}
+  .sec .half.left{justify-content:flex-end; border-radius:4px 0 0 4px; border-right:1px solid var(--sub);}
+  .sec .half.right{border-radius:0 4px 4px 0;}
+  .sec .half div{height:100%;}
+
   /* 공포·탐욕 지수 카드 */
   .fg{padding:14px;}
   .fg-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
@@ -115,6 +132,9 @@
 <p class="meta" id="meta">데이터 불러오는 중</p>
 <div id="alert"></div>
 
+<!-- 지수와 업종은 market.json이 있을 때만 보여요 -->
+<div class="idx-row" id="idxRow" hidden></div>
+
 <!-- 공포·탐욕 지수는 fear_greed.json이 있을 때만 보여요 -->
 <div id="fgArea" hidden>
   <h2>공포·탐욕 지수</h2>
@@ -130,6 +150,13 @@
     <div class="fg-parts" id="fgParts"></div>
   </div>
   <p class="note" id="fgNote"></p>
+</div>
+
+<div id="secArea" hidden>
+  <h2>코스피 업종 등락</h2>
+  <div class="tabs" id="secTabs"></div>
+  <div class="card" id="secList"></div>
+  <p class="note" id="secNote"></p>
 </div>
 
 <!-- 누구의 매매를 볼지 고르는 버튼. 아래 구역들이 모두 이 선택을 따라가요. -->
@@ -368,6 +395,64 @@ fetch("history.json?t=" + Date.now())
   .catch(err => {
     showProblem("history.json을 읽지 못했어요 (" + err.message + "). 파일이 index.html과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
   });
+
+// ───────────────────────── 지수·업종 등락 ─────────────────────────
+function signed(v){ return (v > 0 ? "+" : (v < 0 ? "−" : "")) + Math.abs(v).toFixed(2) + "%"; }
+
+let MARKET = null;
+let secKey = "d1";      // d1 = 1일, w1 = 1주
+
+function renderSectors(){
+  const host = document.getElementById("secList");
+  host.innerHTML = "";
+  [...document.getElementById("secTabs").children]
+    .forEach(b => b.className = (b.dataset.key === secKey ? "on" : ""));
+
+  const rows = MARKET.sectors.filter(x => x[secKey] !== undefined)
+                             .sort((a, b) => b[secKey] - a[secKey]);
+  const max = Math.max(...rows.map(x => Math.abs(x[secKey])), 0.01);
+
+  rows.forEach(x => {
+    const v = x[secKey];
+    const row = el("div", "sec");
+    const both = el("div", "both");
+    const left = el("div", "half left"), right = el("div", "half right");
+    const bar = el("div");
+    bar.style.width = Math.abs(v) / max * 100 + "%";
+    bar.style.background = v >= 0 ? "var(--buy)" : "var(--sell)";
+    (v >= 0 ? right : left).appendChild(bar);   // 오르면 오른쪽, 내리면 왼쪽으로 뻗어요
+    both.append(left, right);
+    row.append(el("div", "name", x.name), both, el("div", "amt " + cls(v), signed(v)));
+    host.appendChild(row);
+  });
+}
+
+fetch("market.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(m => {
+    MARKET = m;
+    const row = document.getElementById("idxRow");
+    m.indices.forEach(x => {
+      const box = el("div", "idx");
+      box.append(
+        el("div", "k", x.name),
+        el("div", "v", x.close.toLocaleString("ko-KR", {minimumFractionDigits:2, maximumFractionDigits:2})),
+        el("div", "c " + cls(x.d1), signed(x.d1))
+      );
+      row.appendChild(box);
+    });
+    row.hidden = m.indices.length === 0;
+
+    if(m.sectors.length){
+      makeTabs("secTabs", [{key:"d1", label:"1일"}, {key:"w1", label:"1주"}],
+               key => { secKey = key; renderSectors(); });
+      renderSectors();
+      document.getElementById("secNote").textContent =
+        "기준일 " + prettyDate(m.date) + ". 가운데 선이 0%이고, 오른쪽이 상승, 왼쪽이 하락이에요.";
+      document.getElementById("secArea").hidden = false;
+    }
+  })
+  .catch(() => { /* market.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 
 // ───────────────────────── 공포·탐욕 지수 ─────────────────────────
 fetch("fear_greed.json?t=" + Date.now())
