@@ -53,6 +53,19 @@
   .twin.head div{text-align:right;}
   .twin.head div:nth-child(2){text-align:left;}
 
+  /* 기간 고르는 알약 버튼 */
+  .tabs{display:flex; gap:6px; margin-bottom:8px;}
+  .tabs button{font:inherit; font-size:13.5px; padding:6px 14px; border:1px solid var(--line);
+               background:var(--card); color:var(--ink); border-radius:999px; cursor:pointer;}
+  .tabs button.on{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  h3{font-size:13px; color:var(--sub); font-weight:600; margin:12px 0 6px;}
+
+  /* 방향 전환 줄: 이름 | 그 전 며칠 | 오늘 금액 */
+  .turn{display:grid; grid-template-columns:minmax(0,1fr) auto 74px; gap:10px;
+        align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+  .turn:last-child{border-bottom:none;}
+  .turn .before{color:var(--sub); font-size:12.5px; white-space:nowrap;}
+
   .note{font-size:12.5px; color:var(--sub); margin-top:6px;}
   footer{color:var(--sub); font-size:12px; margin:22px 0 8px;}
 </style>
@@ -73,6 +86,24 @@
 <h2>연기금·외국인 동시 매수</h2>
 <div class="card" id="twinBuy"></div>
 <p class="note">같은 날 둘 다 순매수한 종목이에요. 두 금액을 합친 순서로 정렬했어요.</p>
+
+<!-- 아래 두 구역은 history.json이 있을 때만 보여요 -->
+<div id="historyArea" hidden>
+  <h2>연기금 기간 누적</h2>
+  <div class="tabs" id="cumTabs"></div>
+  <h3>순매수</h3>
+  <div class="card" id="cumBuy"></div>
+  <h3>순매도</h3>
+  <div class="card" id="cumSell"></div>
+  <p class="note" id="cumNote"></p>
+
+  <h2>연기금 방향 전환</h2>
+  <h3>매수로 전환</h3>
+  <div class="card" id="turnBuy"></div>
+  <h3>매도로 전환</h3>
+  <div class="card" id="turnSell"></div>
+  <p class="note" id="turnNote"></p>
+</div>
 
 <footer>
   원자료: 한국거래소 투자자별 매매(확정치). 연기금은 기관의 일부이고 국민연금만의 거래가 아니에요.<br>
@@ -160,6 +191,46 @@ function drawTwin(hostId, items){
   });
 }
 
+// 방향 전환 목록을 그려요. label은 "매도" 또는 "매수" (그 전에 하던 행동)
+function drawTurn(hostId, items, label){
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  if(!items || items.length === 0){
+    host.appendChild(el("p", "note", "오늘은 해당하는 종목이 없어요."));
+    return;
+  }
+  items.forEach(x => {
+    const row = el("div", "turn");
+    const days = x.prev_days + "일" + (x.capped ? " 이상" : "");
+    row.append(
+      el("div", "name", x.name),
+      el("div", "before", days + " " + label + " 후"),
+      el("div", "amt " + cls(x.amount_eok), fmt(x.amount_eok))
+    );
+    host.appendChild(row);
+  });
+}
+
+// 기간 누적: 1주/1달 버튼을 만들고, 누르면 그 기간으로 다시 그려요.
+function setupCum(cum){
+  const periods = [{key:"week", label:"1주"}, {key:"month", label:"1달"}];
+  const tabs = document.getElementById("cumTabs");
+  function show(key){
+    drawList("cumBuy", cum[key].buy);
+    drawList("cumSell", cum[key].sell);
+    document.getElementById("cumNote").textContent =
+      "최근 " + cum[key].days + "거래일 동안 사고판 금액의 합이에요. 지금 들고 있는 양(보유 잔고)과는 달라요.";
+    [...tabs.children].forEach(b => b.className = (b.dataset.key === key ? "on" : ""));
+  }
+  periods.forEach(p => {
+    const b = el("button", "", p.label);
+    b.dataset.key = p.key;
+    b.onclick = () => show(p.key);
+    tabs.appendChild(b);
+  });
+  show("week");
+}
+
 // 데이터가 며칠 지났는지 확인해서, 오래됐으면 노란 안내를 띄워요.
 function checkFresh(dateStr){
   const d = new Date(prettyDate(dateStr) + "T00:00:00+09:00");
@@ -192,6 +263,20 @@ fetch("data.json?t=" + Date.now())
       "data.json을 읽지 못했어요 (" + err.message + "). 이 파일이 data.json과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
     document.getElementById("alert").appendChild(box);
   });
+
+// 두 번째 파일: history.json (기간 누적, 방향 전환). 없으면 그 구역만 조용히 숨겨 둬요.
+fetch("history.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(h => {
+    setupCum(h.cum);
+    drawTurn("turnBuy", h.turn.to_buy, "매도");
+    drawTurn("turnSell", h.turn.to_sell, "매수");
+    document.getElementById("turnNote").textContent =
+      "그 전에 " + h.settings.turn_min_days + "일 이상 반대로 하다가 오늘 " +
+      h.settings.turn_min_eok + "억 이상 방향을 바꾼 종목이에요. 기준일 " + prettyDate(h.date) + ".";
+    document.getElementById("historyArea").hidden = false;
+  })
+  .catch(() => { /* history.json이 아직 없으면 아무것도 하지 않아요 */ });
 </script>
 </body>
 </html>
