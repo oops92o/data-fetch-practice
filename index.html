@@ -70,6 +70,24 @@
   .turn:last-child{border-bottom:none;}
   .turn .before{color:var(--sub); font-size:12.5px; white-space:nowrap;}
 
+  /* 공포·탐욕 지수 카드 */
+  .fg{padding:14px;}
+  .fg-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .fg-score{font-size:34px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums;}
+  .fg-label{font-size:15px; font-weight:700;}
+  .fg-kospi{margin-left:auto; font-size:13px; color:var(--sub); white-space:nowrap;}
+  .fg-scale{position:relative; height:8px; border-radius:4px; background:var(--track); margin:14px 0 4px;}
+  .fg-pin{position:absolute; top:-4px; width:4px; height:16px; border-radius:2px;
+          background:var(--ink); transform:translateX(-2px);}
+  .fg-ends{display:flex; justify-content:space-between; font-size:11.5px; color:var(--sub);}
+  .fg-past{font-size:12.5px; color:var(--sub); margin-top:8px;}
+  .fg-part{display:grid; grid-template-columns:96px 1fr 26px; gap:8px; align-items:center;
+           font-size:13px; padding-top:9px;}
+  .fg-part .fill{background:var(--sub);}
+  .fg-part .num{text-align:right; font-weight:700; font-variant-numeric:tabular-nums;}
+  .fg-detail{grid-column:1 / -1; font-size:12px; color:var(--sub); margin-top:-4px;}
+  .fg-parts{border-top:1px solid var(--line); margin-top:12px; padding-top:3px;}
+
   /* 공시 한 줄: [분류] 회사 / 제목 */
   .disc{display:block; padding:10px 0; border-bottom:1px solid var(--line); font-size:14px;
         color:inherit; text-decoration:none;}
@@ -96,6 +114,23 @@
 <h1>내 수급 대시보드</h1>
 <p class="meta" id="meta">데이터 불러오는 중</p>
 <div id="alert"></div>
+
+<!-- 공포·탐욕 지수는 fear_greed.json이 있을 때만 보여요 -->
+<div id="fgArea" hidden>
+  <h2>공포·탐욕 지수</h2>
+  <div class="card fg">
+    <div class="fg-head">
+      <span class="fg-score" id="fgScore"></span>
+      <span class="fg-label" id="fgLabel"></span>
+      <span class="fg-kospi" id="fgKospi"></span>
+    </div>
+    <div class="fg-scale"><div class="fg-pin" id="fgPin"></div></div>
+    <div class="fg-ends"><span>공포</span><span>중립</span><span>탐욕</span></div>
+    <div class="fg-past" id="fgPast"></div>
+    <div class="fg-parts" id="fgParts"></div>
+  </div>
+  <p class="note" id="fgNote"></p>
+</div>
 
 <!-- 누구의 매매를 볼지 고르는 버튼. 아래 구역들이 모두 이 선택을 따라가요. -->
 <div class="tabs who" id="whoTabs"></div>
@@ -333,6 +368,45 @@ fetch("history.json?t=" + Date.now())
   .catch(err => {
     showProblem("history.json을 읽지 못했어요 (" + err.message + "). 파일이 index.html과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
   });
+
+// ───────────────────────── 공포·탐욕 지수 ─────────────────────────
+fetch("fear_greed.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(f => {
+    document.getElementById("fgScore").textContent = f.score;
+    document.getElementById("fgLabel").textContent = f.label;
+    document.getElementById("fgPin").style.left = f.score + "%";
+
+    const k = f.kospi;
+    const kospi = document.getElementById("fgKospi");
+    kospi.textContent = "코스피 " + k.close.toLocaleString("ko-KR", {minimumFractionDigits:2}) + " ";
+    kospi.appendChild(el("b", cls(k.change_pct), (k.change_pct > 0 ? "+" : "") + k.change_pct + "%"));
+
+    // 지난 점수: 기록이 쌓인 만큼만 보여 줘요 (어제=1칸 전, 1주 전=5칸 전, 1달 전=20칸 전)
+    const h = f.history, past = [];
+    [["어제", 1], ["1주 전", 5], ["1달 전", 20]].forEach(([name, back]) => {
+      const row = h[h.length - 1 - back];
+      if(row) past.push(name + " " + row.score);
+    });
+    document.getElementById("fgPast").textContent =
+      past.length ? past.join("   ") : "지난 점수는 내일부터 하루씩 쌓여요.";
+
+    const host = document.getElementById("fgParts");
+    f.components.forEach(c => {
+      const row = el("div", "fg-part");
+      const track = el("div", "track");
+      const fill = el("div", "fill");
+      fill.style.width = Math.max(2, c.score) + "%";
+      track.appendChild(fill);
+      row.append(el("div", "", c.name), track, el("div", "num", c.score), el("div", "fg-detail", c.detail));
+      host.appendChild(row);
+    });
+
+    document.getElementById("fgNote").textContent =
+      "기준일 " + prettyDate(f.date) + ". 여섯 점수의 평균이에요. 0에 가까우면 공포, 100에 가까우면 탐욕이고, 계산식은 직접 정한 것이라 다른 사이트 숫자와는 달라요.";
+    document.getElementById("fgArea").hidden = false;
+  })
+  .catch(() => { /* fear_greed.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 
 // ───────────────────────── 공시 알리미 ─────────────────────────
 const TAG_LABEL = {good:"호재성", bad:"악재성", earn:"실적", watch:"관심"};
