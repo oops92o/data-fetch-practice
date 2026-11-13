@@ -81,7 +81,9 @@
   .chip{font-size:11px; font-weight:700; padding:1px 7px; border-radius:999px; white-space:nowrap;
         border:1px solid currentColor;}
   .chip.good{color:var(--buy);} .chip.bad{color:var(--sell);}
-  .chip.earn,.chip.watch{color:var(--sub);}
+  .chip.earn,.chip.watch,.chip.fixed{color:var(--sub);}
+  /* 정정 공시는 흐리게: 새 소식이 아니라 예전 공시를 고친 것이라서요 */
+  .disc.fix .corp, .disc.fix .title, .disc.fix .chip:not(.fixed){opacity:.5;}
   .more{font:inherit; font-size:13.5px; width:100%; padding:10px; margin-top:8px; cursor:pointer;
         border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px;}
 
@@ -349,12 +351,13 @@ function renderDisc(){
     host.appendChild(el("p", "note", "해당하는 공시가 없어요."));
   }
   rows.slice(0, discShown).forEach(x => {
-    const a = el("a", "disc");          // 누르면 DART 원문이 새 창으로 열려요
+    const a = el("a", "disc" + (x.fix ? " fix" : ""));   // 누르면 DART 원문이 새 창으로 열려요
     a.href = x.url; a.target = "_blank"; a.rel = "noopener";
 
     const top = el("div", "top");
+    top.appendChild(el("span", "chip " + x.tag, TAG_LABEL[x.tag] || x.tag));
+    if(x.fix) top.appendChild(el("span", "chip fixed", "정정"));
     top.append(
-      el("span", "chip " + x.tag, TAG_LABEL[x.tag] || x.tag),
       el("span", "corp", x.corp),
       el("span", "when", x.date.slice(4,6) + "/" + x.date.slice(6,8))
     );
@@ -379,7 +382,8 @@ fetch("disclosures.json?t=" + Date.now())
     document.getElementById("discMore").onclick = () => { discShown += 20; renderDisc(); };
     document.getElementById("discNote").textContent =
       d.updated + " 갱신. 공시 " + d.scanned.toLocaleString("ko-KR") +
-      "건 중 제목에 정해 둔 단어가 든 것만 골랐어요. 호재성·악재성은 제목만 보고 붙인 꼬리표예요.";
+      "건 중 제목에 정해 둔 단어가 든 것만 골랐어요. 호재성·악재성은 제목만 보고 붙인 꼬리표예요. " +
+      "흐리게 보이는 '정정'은 예전 공시의 내용을 고친 것이에요.";
     renderDisc();
     document.getElementById("discArea").hidden = false;
   })
