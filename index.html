@@ -87,6 +87,15 @@
   .sec .half.right{border-radius:0 4px 4px 0;}
   .sec .half div{height:100%;}
 
+  /* 일정 한 줄: 날짜 | 제목 | 며칠 남았나 */
+  .evt{display:grid; grid-template-columns:74px minmax(0,1fr) auto; gap:10px; align-items:baseline;
+       padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+  .evt:last-child{border-bottom:none;}
+  .evt .day{color:var(--sub); font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .evt .sub{display:block; color:var(--sub); font-size:12px;}
+  .evt .left{font-size:12.5px; font-weight:700; white-space:nowrap;}
+  .evt.soon .left{color:var(--buy);}
+
   /* 공포·탐욕 지수 카드 */
   .fg{padding:14px;}
   .fg-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
@@ -157,6 +166,12 @@
   <div class="tabs" id="secTabs"></div>
   <div class="card" id="secList"></div>
   <p class="note" id="secNote"></p>
+</div>
+
+<div id="evtArea" hidden>
+  <h2>다가오는 일정</h2>
+  <div class="card" id="evtList"></div>
+  <p class="note">한국 날짜 기준, 앞으로 6주예요. 옵션 만기일은 자동 계산이고, 나머지는 events.json 파일에 직접 적은 일정이에요.</p>
 </div>
 
 <!-- 누구의 매매를 볼지 고르는 버튼. 아래 구역들이 모두 이 선택을 따라가요. -->
@@ -453,6 +468,73 @@ fetch("market.json?t=" + Date.now())
     }
   })
   .catch(() => { /* market.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
+
+// ───────────────────────── 다가오는 일정 ─────────────────────────
+const EVT_WEEKS = 6;                       // 앞으로 몇 주를 보여 줄지
+const DOW = ["일", "월", "화", "수", "목", "금", "토"];
+
+// 한국 시각 기준 '오늘'을 "2026-11-13" 꼴로 구해요.
+function todayKST(){
+  return new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+}
+function addDays(iso, n){
+  const d = new Date(iso + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+function daysBetween(a, b){
+  return Math.round((new Date(b + "T00:00:00Z") - new Date(a + "T00:00:00Z")) / 86400000);
+}
+
+// 규칙으로 정해지는 일정: 매월 둘째 목요일 = 옵션 만기일 (3·6·9·12월은 선물·옵션 동시 만기)
+function ruleEvents(from, to){
+  const out = [];
+  let y = +from.slice(0, 4), m = +from.slice(5, 7);
+  for(let i = 0; i < 4; i++){
+    const first = new Date(Date.UTC(y, m - 1, 1));
+    const offset = (4 - first.getUTCDay() + 7) % 7;      // 첫 목요일까지 며칠
+    const iso = new Date(Date.UTC(y, m - 1, 1 + offset + 7)).toISOString().slice(0, 10);
+    const big = m % 3 === 0;
+    if(iso >= from && iso <= to){
+      out.push({date: iso, tag: "한국",
+                title: big ? "선물·옵션 동시 만기일" : "옵션 만기일",
+                note: "휴장일과 겹치면 앞당겨져요"});
+    }
+    m++; if(m > 12){ m = 1; y++; }
+  }
+  return out;
+}
+
+function drawEvents(manual){
+  const from = todayKST(), to = addDays(from, EVT_WEEKS * 7);
+  const rows = manual.filter(e => e.date >= from && e.date <= to)
+                     .concat(ruleEvents(from, to))
+                     .sort((a, b) => a.date.localeCompare(b.date));
+  const host = document.getElementById("evtList");
+  host.innerHTML = "";
+  if(rows.length === 0){
+    host.appendChild(el("p", "note", "앞으로 6주 안에 적어 둔 일정이 없어요. events.json에 일정을 추가해 보세요."));
+  }
+  rows.forEach(e => {
+    const left = daysBetween(from, e.date);
+    const row = el("div", "evt" + (left <= 3 ? " soon" : ""));
+    const dow = DOW[new Date(e.date + "T00:00:00Z").getUTCDay()];
+    const title = el("div", "", e.title);
+    if(e.note) title.appendChild(el("span", "sub", e.note));
+    row.append(
+      el("div", "day", e.date.slice(5, 7) + "/" + e.date.slice(8, 10) + " " + dow),
+      title,
+      el("div", "left", left === 0 ? "오늘" : (left === 1 ? "내일" : left + "일 뒤"))
+    );
+    host.appendChild(row);
+  });
+  document.getElementById("evtArea").hidden = false;
+}
+
+fetch("events.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(d => drawEvents(d.events || []))
+  .catch(() => drawEvents([]));     // 파일이 없어도 자동 계산 일정은 보여 줘요
 
 // ───────────────────────── 공포·탐욕 지수 ─────────────────────────
 fetch("fear_greed.json?t=" + Date.now())
