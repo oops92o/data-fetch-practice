@@ -28,11 +28,20 @@ jobs:
           done
           exit 1
 
+      - name: 텔레그램 알림
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python notify_disclosures.py
+
       - name: 결과 커밋
+        if: always()
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add disclosures.json
+          for f in disclosures.json notified.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           git commit -m "공시 알리미 업데이트" || echo "변경 없음"
           git pull --rebase
           git push
