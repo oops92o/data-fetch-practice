@@ -54,7 +54,8 @@
   .twin.head div:nth-child(2){text-align:left;}
 
   /* 기간 고르는 알약 버튼 */
-  .tabs{display:flex; gap:6px; margin-bottom:8px;}
+  .tabs{display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;}
+  .tabs button{white-space:nowrap;}
   /* 주체 고르는 버튼은 스크롤해도 화면 위에 붙어 있어요 */
   .tabs.who{position:sticky; top:0; z-index:5; background:var(--bg); padding:10px 0; margin:6px 0 0;}
   .tabs.who button{flex:1; font-weight:600; padding:9px 14px;}
@@ -68,6 +69,21 @@
         align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
   .turn:last-child{border-bottom:none;}
   .turn .before{color:var(--sub); font-size:12.5px; white-space:nowrap;}
+
+  /* 공시 한 줄: [분류] 회사 / 제목 */
+  .disc{display:block; padding:10px 0; border-bottom:1px solid var(--line); font-size:14px;
+        color:inherit; text-decoration:none;}
+  .disc:last-child{border-bottom:none;}
+  .disc .top{display:flex; gap:7px; align-items:center;}
+  .disc .corp{font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .disc .when{margin-left:auto; color:var(--sub); font-size:12px; white-space:nowrap;}
+  .disc .title{color:var(--sub); font-size:13px; margin-top:2px;}
+  .chip{font-size:11px; font-weight:700; padding:1px 7px; border-radius:999px; white-space:nowrap;
+        border:1px solid currentColor;}
+  .chip.good{color:var(--buy);} .chip.bad{color:var(--sell);}
+  .chip.earn,.chip.watch{color:var(--sub);}
+  .more{font:inherit; font-size:13.5px; width:100%; padding:10px; margin-top:8px; cursor:pointer;
+        border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px;}
 
   .note{font-size:12.5px; color:var(--sub); margin-top:6px;}
   footer{color:var(--sub); font-size:12px; margin:22px 0 8px;}
@@ -110,8 +126,17 @@
   <p class="note">같은 날 둘 다 순매수한 종목이에요. 두 금액을 합친 순서로 정렬했어요.</p>
 </div>
 
+<!-- 공시 구역은 disclosures.json이 있을 때만 보여요 -->
+<div id="discArea" hidden>
+  <h2>공시 알리미</h2>
+  <div class="tabs" id="discTabs"></div>
+  <div class="card" id="discList"></div>
+  <button class="more" id="discMore" hidden>더 보기</button>
+  <p class="note" id="discNote"></p>
+</div>
+
 <footer>
-  원자료: 한국거래소 투자자별 매매(확정치). 연기금은 기관의 일부이고 국민연금만의 거래가 아니에요.<br>
+  원자료: 한국거래소 투자자별 매매(확정치), 금융감독원 DART 공시. 연기금은 기관의 일부이고 국민연금만의 거래가 아니에요.<br>
   공부용 정리이며 투자 권유가 아니에요.
 </footer>
 
@@ -306,6 +331,59 @@ fetch("history.json?t=" + Date.now())
   .catch(err => {
     showProblem("history.json을 읽지 못했어요 (" + err.message + "). 파일이 index.html과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
   });
+
+// ───────────────────────── 공시 알리미 ─────────────────────────
+const TAG_LABEL = {good:"호재성", bad:"악재성", earn:"실적", watch:"관심"};
+let DISC = null;         // disclosures.json 전체
+let discTag = "all";     // 지금 고른 분류
+let discShown = 20;      // 지금 몇 건까지 보여 주는지
+
+function renderDisc(){
+  const host = document.getElementById("discList");
+  host.innerHTML = "";
+  [...document.getElementById("discTabs").children]
+    .forEach(b => b.className = (b.dataset.key === discTag ? "on" : ""));
+
+  const rows = DISC.items.filter(x => discTag === "all" || x.tag === discTag);
+  if(rows.length === 0){
+    host.appendChild(el("p", "note", "해당하는 공시가 없어요."));
+  }
+  rows.slice(0, discShown).forEach(x => {
+    const a = el("a", "disc");          // 누르면 DART 원문이 새 창으로 열려요
+    a.href = x.url; a.target = "_blank"; a.rel = "noopener";
+
+    const top = el("div", "top");
+    top.append(
+      el("span", "chip " + x.tag, TAG_LABEL[x.tag] || x.tag),
+      el("span", "corp", x.corp),
+      el("span", "when", x.date.slice(4,6) + "/" + x.date.slice(6,8))
+    );
+    a.append(top, el("div", "title", x.title));
+    host.appendChild(a);
+  });
+
+  const more = document.getElementById("discMore");
+  more.hidden = rows.length <= discShown;
+  more.textContent = "더 보기 (" + (rows.length - discShown) + "건 남음)";
+}
+
+fetch("disclosures.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(d => {
+    DISC = d;
+    const options = [{key:"all", label:"전체"}];
+    ["good", "bad", "earn", "watch"].forEach(k => {
+      if(d.counts[k]) options.push({key:k, label:TAG_LABEL[k] + " " + d.counts[k]});
+    });
+    makeTabs("discTabs", options, key => { discTag = key; discShown = 20; renderDisc(); });
+    document.getElementById("discMore").onclick = () => { discShown += 20; renderDisc(); };
+    document.getElementById("discNote").textContent =
+      d.updated + " 갱신. 공시 " + d.scanned.toLocaleString("ko-KR") +
+      "건 중 제목에 정해 둔 단어가 든 것만 골랐어요. 호재성·악재성은 제목만 보고 붙인 꼬리표예요.";
+    renderDisc();
+    document.getElementById("discArea").hidden = false;
+  })
+  .catch(() => { /* disclosures.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 </script>
 </body>
 </html>
