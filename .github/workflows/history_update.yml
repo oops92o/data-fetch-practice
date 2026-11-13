@@ -45,12 +45,27 @@ jobs:
           done
           exit 1
 
+      - name: 지수·업종 등락 수집
+        if: always()
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+        run: |
+          for i in 1 2 3; do
+            python fetch_market.py && exit 0
+            echo "실패 ($i/3), 5분 뒤 재시도"
+            sleep 300
+          done
+          exit 1
+
       - name: 결과 커밋
         if: always()            # 둘 중 하나만 성공해도 그 결과는 저장해요
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add history.json fear_greed.json 2>/dev/null || git add -A '*.json'
-          git commit -m "수급·공포탐욕 업데이트" || echo "변경 없음"
+          for f in history.json fear_greed.json market.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
+          git commit -m "수급·시장 지표 업데이트" || echo "변경 없음"
           git pull --rebase
           git push
