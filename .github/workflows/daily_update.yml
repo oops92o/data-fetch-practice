@@ -23,7 +23,13 @@ jobs:
         env:
           KRX_ID: ${{ secrets.KRX_ID }}
           KRX_PW: ${{ secrets.KRX_PW }}
-        run: python fetch_pension_data.py
+        run: |
+          for i in 1 2 3; do
+            python fetch_pension_data.py && exit 0
+            echo "실패 ($i/3), 5분 뒤 재시도"
+            sleep 300
+          done
+          exit 1        
 
       - name: 결과 커밋
         run: |
