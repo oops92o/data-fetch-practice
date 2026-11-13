@@ -1,0 +1,307 @@
+{
+  "date": "20261112",
+  "days_collected": 20,
+  "cum": {
+    "week": {
+      "days": 5,
+      "buy": [
+        {
+          "ticker": "005930",
+          "name": "삼성전자",
+          "amount_eok": 1887.2
+        },
+        {
+          "ticker": "017670",
+          "name": "SK텔레콤",
+          "amount_eok": 600.2
+        },
+        {
+          "ticker": "078930",
+          "name": "GS",
+          "amount_eok": 443.5
+        },
+        {
+          "ticker": "207940",
+          "name": "삼성바이오로직스",
+          "amount_eok": 380.9
+        },
+        {
+          "ticker": "316140",
+          "name": "우리금융지주",
+          "amount_eok": 366.9
+        },
+        {
+          "ticker": "068270",
+          "name": "셀트리온",
+          "amount_eok": 365.4
+        },
+        {
+          "ticker": "018260",
+          "name": "삼성에스디에스",
+          "amount_eok": 348.0
+        },
+        {
+          "ticker": "353200",
+          "name": "대덕전자",
+          "amount_eok": 319.0
+        },
+        {
+          "ticker": "035420",
+          "name": "NAVER",
+          "amount_eok": 311.6
+        },
+        {
+          "ticker": "222800",
+          "name": "심텍",
+          "amount_eok": 311.0
+        }
+      ],
+      "sell": [
+        {
+          "ticker": "000660",
+          "name": "SK하이닉스",
+          "amount_eok": -1732.6
+        },
+        {
+          "ticker": "402340",
+          "name": "SK스퀘어",
+          "amount_eok": -1669.7
+        },
+        {
+          "ticker": "005935",
+          "name": "삼성전자우",
+          "amount_eok": -649.6
+        },
+        {
+          "ticker": "196170",
+          "name": "알테오젠",
+          "amount_eok": -373.8
+        },
+        {
+          "ticker": "005380",
+          "name": "현대차",
+          "amount_eok": -345.4
+        },
+        {
+          "ticker": "010950",
+          "name": "S-Oil",
+          "amount_eok": -342.4
+        },
+        {
+          "ticker": "096770",
+          "name": "SK이노베이션",
+          "amount_eok": -314.7
+        },
+        {
+          "ticker": "012450",
+          "name": "한화에어로스페이스",
+          "amount_eok": -287.3
+        },
+        {
+          "ticker": "138040",
+          "name": "메리츠금융지주",
+          "amount_eok": -284.2
+        },
+        {
+          "ticker": "034020",
+          "name": "두산에너빌리티",
+          "amount_eok": -282.8
+        }
+      ]
+    },
+    "month": {
+      "days": 20,
+      "buy": [
+        {
+          "ticker": "005930",
+          "name": "삼성전자",
+          "amount_eok": 5993.6
+        },
+        {
+          "ticker": "207940",
+          "name": "삼성바이오로직스",
+          "amount_eok": 4136.1
+        },
+        {
+          "ticker": "068270",
+          "name": "셀트리온",
+          "amount_eok": 2923.6
+        },
+        {
+          "ticker": "000660",
+          "name": "SK하이닉스",
+          "amount_eok": 2284.3
+        },
+        {
+          "ticker": "032830",
+          "name": "삼성생명",
+          "amount_eok": 2248.5
+        },
+        {
+          "ticker": "064400",
+          "name": "LG씨엔에스",
+          "amount_eok": 1605.1
+        },
+        {
+          "ticker": "373220",
+          "name": "LG에너지솔루션",
+          "amount_eok": 1567.1
+        },
+        {
+          "ticker": "316140",
+          "name": "우리금융지주",
+          "amount_eok": 1452.9
+        },
+        {
+          "ticker": "018260",
+          "name": "삼성에스디에스",
+          "amount_eok": 1400.5
+        },
+        {
+          "ticker": "028260",
+          "name": "삼성물산",
+          "amount_eok": 1364.6
+        }
+      ],
+      "sell": [
+        {
+          "ticker": "005935",
+          "name": "삼성전자우",
+          "amount_eok": -3438.6
+        },
+        {
+          "ticker": "010950",
+          "name": "S-Oil",
+          "amount_eok": -1887.4
+        },
+        {
+          "ticker": "034020",
+          "name": "두산에너빌리티",
+          "amount_eok": -1239.3
+        },
+        {
+          "ticker": "009150",
+          "name": "삼성전기",
+          "amount_eok": -1183.3
+        },
+        {
+          "ticker": "000150",
+          "name": "두산",
+          "amount_eok": -1104.4
+        },
+        {
+          "ticker": "329180",
+          "name": "HD현대중공업",
+          "amount_eok": -884.5
+        },
+        {
+          "ticker": "012450",
+          "name": "한화에어로스페이스",
+          "amount_eok": -816.3
+        },
+        {
+          "ticker": "096770",
+          "name": "SK이노베이션",
+          "amount_eok": -810.8
+        },
+        {
+          "ticker": "000720",
+          "name": "현대건설",
+          "amount_eok": -794.2
+        },
+        {
+          "ticker": "267260",
+          "name": "HD현대일렉트릭",
+          "amount_eok": -793.1
+        }
+      ]
+    }
+  },
+  "turn": {
+    "to_buy": [
+      {
+        "ticker": "383220",
+        "name": "F&F",
+        "prev_days": 14,
+        "capped": false,
+        "amount_eok": 1.5
+      },
+      {
+        "ticker": "011070",
+        "name": "LG이노텍",
+        "prev_days": 14,
+        "capped": false,
+        "amount_eok": 1.1
+      },
+      {
+        "ticker": "445680",
+        "name": "큐리옥스바이오시스템즈",
+        "prev_days": 7,
+        "capped": false,
+        "amount_eok": 5.3
+      },
+      {
+        "ticker": "443060",
+        "name": "HD현대마린솔루션",
+        "prev_days": 6,
+        "capped": false,
+        "amount_eok": 10.6
+      },
+      {
+        "ticker": "000720",
+        "name": "현대건설",
+        "prev_days": 6,
+        "capped": false,
+        "amount_eok": 6.7
+      },
+      {
+        "ticker": "329180",
+        "name": "HD현대중공업",
+        "prev_days": 5,
+        "capped": false,
+        "amount_eok": 79.3
+      },
+      {
+        "ticker": "062040",
+        "name": "산일전기",
+        "prev_days": 5,
+        "capped": false,
+        "amount_eok": 2.6
+      }
+    ],
+    "to_sell": [
+      {
+        "ticker": "018260",
+        "name": "삼성에스디에스",
+        "prev_days": 15,
+        "capped": false,
+        "amount_eok": -55.5
+      },
+      {
+        "ticker": "000080",
+        "name": "하이트진로",
+        "prev_days": 15,
+        "capped": false,
+        "amount_eok": -1.4
+      },
+      {
+        "ticker": "010060",
+        "name": "OCI홀딩스",
+        "prev_days": 9,
+        "capped": false,
+        "amount_eok": -38.7
+      },
+      {
+        "ticker": "000210",
+        "name": "DL",
+        "prev_days": 6,
+        "capped": false,
+        "amount_eok": -2.6
+      }
+    ]
+  },
+  "settings": {
+    "turn_min_days": 5,
+    "turn_min_eok": 1.0
+  }
+}
