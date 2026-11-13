@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 수급 대시보드</title>
+<style>
+  /* ── 색은 여기 한 곳에서만 정해요 (밝은 화면) ── */
+  :root{
+    --buy:#d92b2b; --sell:#2456c8; --ink:#1c2333; --sub:#6b7280;
+    --line:#e5e7eb; --card:#ffffff; --bg:#f6f7f9; --track:#f0f2f5;
+    --warn-bg:#fff8e6; --warn-line:#f0dfae;
+  }
+  /* ── 아이폰이 다크 모드일 때 쓰는 색 ── */
+  @media (prefers-color-scheme: dark){
+    :root{
+      color-scheme: dark;
+      --buy:#ff6b6b; --sell:#6ea0ff; --ink:#e8eaf0; --sub:#9aa3b2;
+      --line:#2a3040; --card:#191d27; --bg:#10131a; --track:#232836;
+      --warn-bg:#2b2616; --warn-line:#5a4c1e;
+    }
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+       background:var(--bg); color:var(--ink); padding:16px; max-width:720px;
+       margin:0 auto; line-height:1.5;}
+  h1{font-size:21px; margin-bottom:2px;}
+  h2{font-size:15.5px; margin:22px 0 8px;}
+  .meta{color:var(--sub); font-size:12.5px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:6px 14px;}
+  .warn{background:var(--warn-bg); border:1px solid var(--warn-line); border-radius:12px;
+        padding:11px 14px; font-size:13.5px; margin-top:12px;}
+  .buy{color:var(--buy);} .sell{color:var(--sell);}
+
+  /* 종목 한 줄: 순위 | 이름 | 막대 | 금액 */
+  .item{display:grid; grid-template-columns:20px minmax(0,1fr) 34% 74px;
+        gap:8px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line);
+        font-size:14px;}
+  .item:last-child{border-bottom:none;}
+  .rank{color:var(--sub); font-size:12.5px; text-align:right;}
+  .name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .tag{font-size:11px; color:var(--sub); margin-left:5px;}
+  .track{background:var(--track); border-radius:4px; height:10px; overflow:hidden;}
+  .fill{height:100%; border-radius:4px;}
+  .amt{text-align:right; font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap;}
+
+  /* 동시 매수 줄: 이름 | 연기금 | 외국인 */
+  .twin{display:grid; grid-template-columns:20px minmax(0,1fr) 74px 80px;
+        gap:8px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line);
+        font-size:14px;}
+  .twin:last-child{border-bottom:none;}
+  .twin.head{color:var(--sub); font-size:12px; padding:7px 0;}
+  .twin.head div{text-align:right;}
+  .twin.head div:nth-child(2){text-align:left;}
+
+  .note{font-size:12.5px; color:var(--sub); margin-top:6px;}
+  footer{color:var(--sub); font-size:12px; margin:22px 0 8px;}
+</style>
+</head>
+<body>
+
+<h1>내 수급 대시보드</h1>
+<p class="meta" id="meta">데이터 불러오는 중</p>
+<div id="alert"></div>
+
+<h2>연기금 순매수 상위 10</h2>
+<div class="card" id="topBuy"></div>
+<p class="note">이름 옆 숫자는 며칠째 계속 사고 있는지예요.</p>
+
+<h2>연기금 순매도 상위 10</h2>
+<div class="card" id="topSell"></div>
+
+<h2>연기금·외국인 동시 매수</h2>
+<div class="card" id="twinBuy"></div>
+<p class="note">같은 날 둘 다 순매수한 종목이에요. 두 금액을 합친 순서로 정렬했어요.</p>
+
+<footer>
+  원자료: 한국거래소 투자자별 매매(확정치). 연기금은 기관의 일부이고 국민연금만의 거래가 아니에요.<br>
+  공부용 정리이며 투자 권유가 아니에요.
+</footer>
+
+<script>
+// ───────────────────────── 도우미 함수 ─────────────────────────
+
+// 숫자를 "+1,810.2억" 같은 글자로 바꿔요. 1조가 넘으면 "조"로 표시해요.
+function fmt(v){
+  const sign = v > 0 ? "+" : (v < 0 ? "−" : "");
+  const a = Math.abs(v);
+  if(a >= 10000) return sign + (a/10000).toFixed(2) + "조";
+  return sign + a.toLocaleString("ko-KR", {maximumFractionDigits:1}) + "억";
+}
+
+// 양수면 빨강(buy), 음수면 파랑(sell) 클래스 이름을 돌려줘요.
+function cls(v){ return v > 0 ? "buy" : (v < 0 ? "sell" : ""); }
+
+// 태그 하나를 만들어 주는 작은 공장이에요. el("div", "name", "삼성전자")
+function el(tag, className, text){
+  const node = document.createElement(tag);
+  if(className) node.className = className;
+  if(text !== undefined) node.textContent = text;
+  return node;
+}
+
+// "20261112" → "2026-11-12"
+function prettyDate(s){ return s.slice(0,4) + "-" + s.slice(4,6) + "-" + s.slice(6,8); }
+
+// ───────────────────────── 화면 그리기 ─────────────────────────
+
+// 순매수/순매도 목록을 그려요. 막대 길이는 목록에서 가장 큰 금액 대비 비율이에요.
+function drawList(hostId, items){
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  if(!items || items.length === 0){
+    host.appendChild(el("p", "note", "해당하는 종목이 없어요."));
+    return;
+  }
+  const max = Math.max(...items.map(x => Math.abs(x.amount_eok)), 1);
+
+  items.forEach((x, i) => {
+    const row = el("div", "item");
+    row.appendChild(el("div", "rank", i + 1));
+
+    const name = el("div", "name", x.name);
+    if(x.streak_days >= 2) name.appendChild(el("span", "tag", x.streak_days + "일째"));
+    row.appendChild(name);
+
+    const track = el("div", "track");
+    const fill = el("div", "fill");
+    fill.style.width = Math.max(2, Math.abs(x.amount_eok) / max * 100) + "%";
+    fill.style.background = x.amount_eok >= 0 ? "var(--buy)" : "var(--sell)";
+    track.appendChild(fill);
+    row.appendChild(track);
+
+    row.appendChild(el("div", "amt " + cls(x.amount_eok), fmt(x.amount_eok)));
+    host.appendChild(row);
+  });
+}
+
+// 동시 매수 표를 그려요.
+function drawTwin(hostId, items){
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  if(!items || items.length === 0){
+    host.appendChild(el("p", "note", "오늘은 둘 다 순매수한 종목이 없어요."));
+    return;
+  }
+  const head = el("div", "twin head");
+  head.append(el("div"), el("div", "", "종목"), el("div", "", "연기금"), el("div", "", "외국인"));
+  host.appendChild(head);
+
+  items.forEach((x, i) => {
+    const row = el("div", "twin");
+    row.append(
+      el("div", "rank", i + 1),
+      el("div", "name", x.name),
+      el("div", "amt " + cls(x.pension_eok), fmt(x.pension_eok)),
+      el("div", "amt " + cls(x.foreign_eok), fmt(x.foreign_eok))
+    );
+    host.appendChild(row);
+  });
+}
+
+// 데이터가 며칠 지났는지 확인해서, 오래됐으면 노란 안내를 띄워요.
+function checkFresh(dateStr){
+  const d = new Date(prettyDate(dateStr) + "T00:00:00+09:00");
+  const days = Math.floor((Date.now() - d.getTime()) / 86400000);
+  if(days >= 5){
+    const box = el("div", "warn",
+      "데이터가 " + days + "일 전 것이에요. 자동 수집이 멈췄을 수 있으니 GitHub의 Actions 탭을 확인해 보세요.");
+    document.getElementById("alert").appendChild(box);
+  }
+}
+
+// ───────────────────────── 시작 ─────────────────────────
+// data.json을 가져와요. 뒤에 붙인 ?t=... 는 옛날 파일이 캐시에서 나오지 않게 하는 장치예요.
+fetch("data.json?t=" + Date.now())
+  .then(res => {
+    if(!res.ok) throw new Error("data.json 응답 코드 " + res.status);
+    return res.json();
+  })
+  .then(data => {
+    document.getElementById("meta").textContent =
+      "기준일 " + prettyDate(data.date) + " 마감 확정치, 단위 억 원";
+    checkFresh(data.date);
+    drawList("topBuy", data.top_buy);
+    drawList("topSell", data.top_sell);
+    drawTwin("twinBuy", data.twin_buy);
+  })
+  .catch(err => {
+    document.getElementById("meta").textContent = "데이터를 불러오지 못했어요";
+    const box = el("div", "warn",
+      "data.json을 읽지 못했어요 (" + err.message + "). 이 파일이 data.json과 같은 폴더에 있는지, GitHub Pages 주소로 열었는지 확인해 주세요.");
+    document.getElementById("alert").appendChild(box);
+  });
+</script>
+</body>
+</html>
