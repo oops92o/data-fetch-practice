@@ -1,0 +1,53 @@
+{
+ "date": "20261113",
+ "score": 42,
+ "label": "공포",
+ "components": [
+  {
+   "key": "momentum",
+   "name": "시장 모멘텀",
+   "score": 2,
+   "detail": "125일 평균선 대비 -24.1%"
+  },
+  {
+   "key": "breadth",
+   "name": "시장 폭",
+   "score": 45,
+   "detail": "오른 종목 비율 48%"
+  },
+  {
+   "key": "highlow",
+   "name": "신고가·신저가",
+   "score": 14,
+   "detail": "신고가 17종목, 신저가 102종목"
+  },
+  {
+   "key": "volatility",
+   "name": "변동성",
+   "score": 40,
+   "detail": "하루 평균 출렁임 3.31%"
+  },
+  {
+   "key": "money",
+   "name": "매수 거래대금",
+   "score": 78,
+   "detail": "오른 종목 거래대금 비중 61%"
+  },
+  {
+   "key": "foreign",
+   "name": "외국인 수급",
+   "score": 76,
+   "detail": "최근 5일 순매수 +4,522억"
+  }
+ ],
+ "kospi": {
+  "close": 5282.65,
+  "change_pct": -1.12
+ },
+ "history": [
+  {
+   "date": "20261113",
+   "score": 42
+  }
+ ]
+}
