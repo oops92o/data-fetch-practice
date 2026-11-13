@@ -1,8 +1,8 @@
 {
- "updated": "2026-11-13 16:43",
+ "updated": "2026-11-13 16:46",
  "from": "20261109",
  "to": "20261113",
- "scanned": 2994,
+ "scanned": 3006,
  "counts": {
   "bad": 48,
   "earn": 77,
@@ -488,6 +488,18 @@
    "word": "전환사채권발행결정",
    "fix": true,
    "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001253"
+  },
+  {
+   "no": "20261113001192",
+   "date": "20261113",
+   "corp": "셀루메드",
+   "code": "049180",
+   "market": "코스닥",
+   "title": "[기재정정]주요사항보고서(감자결정)",
+   "tag": "bad",
+   "word": "감자결정",
+   "fix": true,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113001192"
   },
   {
    "no": "20261113001161",
@@ -2396,18 +2408,6 @@
    "word": "영업(잠정)실적",
    "fix": true,
    "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111800696"
-  },
-  {
-   "no": "20261111800695",
-   "date": "20261111",
-   "corp": "LF",
-   "code": "093050",
-   "market": "코스피",
-   "title": "감자결정(자율공시)(종속회사의주요경영사항)",
-   "tag": "bad",
-   "word": "감자결정",
-   "fix": false,
-   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261111800695"
   }
  ]
 }
