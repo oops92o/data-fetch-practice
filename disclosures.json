@@ -1,14 +1,26 @@
 {
- "updated": "2026-11-16 02:01",
+ "updated": "2026-11-16 10:57",
  "from": "20261112",
  "to": "20261116",
- "scanned": 1991,
+ "scanned": 2143,
  "counts": {
+  "good": 70,
   "bad": 57,
-  "good": 69,
   "earn": 57
  },
  "items": [
+  {
+   "no": "20261116800077",
+   "date": "20261116",
+   "corp": "삼성중공업",
+   "code": "010140",
+   "market": "코스피",
+   "title": "단일판매ㆍ공급계약체결",
+   "tag": "good",
+   "word": "단일판매공급계약체결",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261116800077"
+  },
   {
    "no": "20261113902073",
    "date": "20261113",
