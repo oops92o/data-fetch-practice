@@ -2,8 +2,10 @@ name: 연기금 데이터 업데이트
 
 on:
   schedule:
-    - cron: "0 10 * * 1-5"  
-# 한국시간 19:00로 30분~1시간 늦춤
+    # GitHub 예약 실행은 늦어지거나 건너뛸 때가 있어서 예비 시각을 두 번 더 넣었어요. (시각은 UTC 기준)
+    - cron: "0 10 * * 1-5"    # 한국시간 19:00
+    - cron: "5 13 * * 1-5"    # 한국시간 22:05 (예비)
+    - cron: "10 21 * * 1-5"   # 한국시간 다음 날 06:10 (예비)
   workflow_dispatch: {}
 
 jobs:
@@ -29,7 +31,7 @@ jobs:
             echo "실패 ($i/3), 5분 뒤 재시도"
             sleep 300
           done
-          exit 1        
+          exit 1
 
       - name: 결과 커밋
         run: |
@@ -37,4 +39,5 @@ jobs:
           git config user.email "actions@github.com"
           git add data.json
           git commit -m "연기금 데이터 업데이트" || echo "변경 없음"
+          git pull --rebase
           git push
