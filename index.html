@@ -86,6 +86,20 @@
   .sec .half.left{justify-content:flex-end; border-radius:4px 0 0 4px; border-right:1px solid var(--sub);}
   .sec .half.right{border-radius:0 4px 4px 0;}
   .sec .half div{height:100%;}
+  /* 누를 수 있는 업종: 이름 옆에 작은 화살표 */
+  .sec.click{cursor:pointer;}
+  .sec .arrow{display:inline-block; color:var(--sub); font-size:11px; margin-left:4px; transition:transform .15s;}
+  .sec.open .arrow{transform:rotate(90deg);}
+  .sec.open{border-bottom-color:transparent;}
+
+  /* 펼쳐진 구성 종목 상자 */
+  .members{background:var(--bg); border-radius:10px; padding:4px 12px; margin:0 0 8px;}
+  .members .info{font-size:12px; color:var(--sub); padding:7px 0 3px;}
+  .mem{display:grid; grid-template-columns:minmax(0,1fr) 62px 58px; gap:8px; align-items:center;
+       padding:7px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .mem:last-child{border-bottom:none;}
+  .mem a{color:inherit; text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .mem .cap{color:var(--sub); font-size:12px; text-align:right; white-space:nowrap;}
 
   /* 일정 한 줄: 날짜 | 제목 | 며칠 남았나 */
   .evt{display:grid; grid-template-columns:74px minmax(0,1fr) auto; gap:10px; align-items:baseline;
@@ -416,6 +430,36 @@ function signed(v){ return (v > 0 ? "+" : (v < 0 ? "−" : "")) + Math.abs(v).to
 
 let MARKET = null;
 let secKey = "d1";      // d1 = 1일, w1 = 1주
+const openSec = new Set();   // 펼쳐 둔 업종 이름들
+
+// 시가총액을 "412조" / "8,350억" 처럼
+function capText(eok){
+  if(eok >= 10000) return Math.round(eok / 10000).toLocaleString("ko-KR") + "조";
+  return eok.toLocaleString("ko-KR") + "억";
+}
+
+// 업종 아래에 펼쳐지는 구성 종목 상자
+function membersBox(x){
+  const box = el("div", "members");
+  const label = secKey === "w1" ? "1주" : "1일";
+  box.appendChild(el("div", "info",
+    "전체 " + x.count + "종목 중 상승 " + x.up + " · 하락 " + x.down +
+    ". 아래는 시가총액 상위 " + x.members.length + "개, " + label + " 등락률이에요."));
+  x.members.forEach(m => {
+    const row = el("div", "mem");
+    const link = el("a", "", m.name);   // 누르면 네이버 금융 종목 화면이 열려요
+    link.href = "https://finance.naver.com/item/main.naver?code=" + m.ticker;
+    link.target = "_blank"; link.rel = "noopener";
+    const v = m[secKey];
+    row.append(
+      link,
+      el("div", "cap", capText(m.cap_eok)),
+      v === undefined ? el("div", "amt", "-") : el("div", "amt " + cls(v), signed(v))
+    );
+    box.appendChild(row);
+  });
+  return box;
+}
 
 function renderSectors(){
   const host = document.getElementById("secList");
@@ -429,7 +473,9 @@ function renderSectors(){
 
   rows.forEach(x => {
     const v = x[secKey];
-    const row = el("div", "sec");
+    const canOpen = !!(x.members && x.members.length);
+    const isOpen = canOpen && openSec.has(x.name);
+    const row = el("div", "sec" + (canOpen ? " click" : "") + (isOpen ? " open" : ""));
     const both = el("div", "both");
     const left = el("div", "half left"), right = el("div", "half right");
     const bar = el("div");
@@ -437,8 +483,18 @@ function renderSectors(){
     bar.style.background = v >= 0 ? "var(--buy)" : "var(--sell)";
     (v >= 0 ? right : left).appendChild(bar);   // 오르면 오른쪽, 내리면 왼쪽으로 뻗어요
     both.append(left, right);
-    row.append(el("div", "name", x.name), both, el("div", "amt " + cls(v), signed(v)));
+    const name = el("div", "name", x.name);
+    if(canOpen) name.appendChild(el("span", "arrow", "▶"));
+    row.append(name, both, el("div", "amt " + cls(v), signed(v)));
     host.appendChild(row);
+
+    if(canOpen){
+      row.onclick = () => {           // 누를 때마다 펼치기 ↔ 접기
+        if(openSec.has(x.name)) openSec.delete(x.name); else openSec.add(x.name);
+        renderSectors();
+      };
+      if(isOpen) host.appendChild(membersBox(x));
+    }
   });
 }
 
@@ -463,7 +519,8 @@ fetch("market.json?t=" + Date.now())
                key => { secKey = key; renderSectors(); });
       renderSectors();
       document.getElementById("secNote").textContent =
-        "기준일 " + prettyDate(m.date) + ". 가운데 선이 0%이고, 오른쪽이 상승, 왼쪽이 하락이에요.";
+        "기준일 " + prettyDate(m.date) + ". 가운데 선이 0%이고, 오른쪽이 상승, 왼쪽이 하락이에요." +
+        (m.sectors.some(s => s.members) ? " 업종을 누르면 구성 종목이 펼쳐져요." : "");
       document.getElementById("secArea").hidden = false;
     }
   })
