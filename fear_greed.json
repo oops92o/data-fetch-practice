@@ -1,5 +1,5 @@
 {
- "date": "20261118",
+ "date": "20261119",
  "score": 24,
  "label": "극단적 공포",
  "components": [
@@ -7,7 +7,7 @@
    "key": "momentum",
    "name": "시장 모멘텀",
    "score": 2,
-   "detail": "125일 평균선 대비 -26.5%"
+   "detail": "125일 평균선 대비 -27.0%"
   },
   {
    "key": "breadth",
@@ -18,31 +18,31 @@
   {
    "key": "highlow",
    "name": "신고가·신저가",
-   "score": 5,
-   "detail": "신고가 9종목, 신저가 165종목"
+   "score": 8,
+   "detail": "신고가 16종목, 신저가 192종목"
   },
   {
    "key": "volatility",
    "name": "변동성",
-   "score": 45,
-   "detail": "하루 평균 출렁임 3.24%"
+   "score": 48,
+   "detail": "하루 평균 출렁임 3.17%"
   },
   {
    "key": "money",
    "name": "매수 거래대금",
-   "score": 13,
-   "detail": "오른 종목 거래대금 비중 35%"
+   "score": 8,
+   "detail": "오른 종목 거래대금 비중 33%"
   },
   {
    "key": "foreign",
    "name": "외국인 수급",
-   "score": 50,
-   "detail": "최근 5일 순매수 -31,431억"
+   "score": 47,
+   "detail": "최근 5일 순매수 -38,088억"
   }
  ],
  "kospi": {
-  "close": 5067.44,
-  "change_pct": 1.99
+  "close": 5019.72,
+  "change_pct": -0.94
  },
  "history": [
   {
@@ -59,6 +59,10 @@
   },
   {
    "date": "20261118",
+   "score": 24
+  },
+  {
+   "date": "20261119",
    "score": 24
   }
  ]
