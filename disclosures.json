@@ -1,14 +1,98 @@
 {
- "updated": "2026-11-18 21:57",
- "from": "20261114",
- "to": "20261118",
- "scanned": 2513,
+ "updated": "2026-11-19 12:19",
+ "from": "20261115",
+ "to": "20261119",
+ "scanned": 2580,
  "counts": {
-  "bad": 86,
-  "good": 87,
+  "good": 93,
+  "bad": 90,
   "earn": 8
  },
  "items": [
+  {
+   "no": "20261119900202",
+   "date": "20261119",
+   "corp": "나노실리칸첨단소재",
+   "code": "286750",
+   "market": "코스닥",
+   "title": "단일판매ㆍ공급계약체결",
+   "tag": "good",
+   "word": "단일판매공급계약체결",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119900202"
+  },
+  {
+   "no": "20261119900126",
+   "date": "20261119",
+   "corp": "이미지스",
+   "code": "115610",
+   "market": "코스닥",
+   "title": "단일판매ㆍ공급계약체결",
+   "tag": "good",
+   "word": "단일판매공급계약체결",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119900126"
+  },
+  {
+   "no": "20261119900001",
+   "date": "20261119",
+   "corp": "펩트론",
+   "code": "087010",
+   "market": "코스닥",
+   "title": "투자판단관련주요경영사항(임상시험계획승인신청등결정)              (PT403의 제1상 임상시험계획 승인)",
+   "tag": "good",
+   "word": "임상시험계획승인",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119900001"
+  },
+  {
+   "no": "20261119800082",
+   "date": "20261119",
+   "corp": "한화오션",
+   "code": "042660",
+   "market": "코스피",
+   "title": "단일판매ㆍ공급계약체결",
+   "tag": "good",
+   "word": "단일판매공급계약체결",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119800082"
+  },
+  {
+   "no": "20261119800079",
+   "date": "20261119",
+   "corp": "씨에스윈드",
+   "code": "112610",
+   "market": "코스피",
+   "title": "단일판매ㆍ공급계약체결",
+   "tag": "good",
+   "word": "단일판매공급계약체결",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119800079"
+  },
+  {
+   "no": "20261119800003",
+   "date": "20261119",
+   "corp": "고려아연",
+   "code": "010130",
+   "market": "코스피",
+   "title": "소송등의제기ㆍ신청(경영권분쟁소송)",
+   "tag": "bad",
+   "word": "소송등의제기",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119800003"
+  },
+  {
+   "no": "20261119000091",
+   "date": "20261119",
+   "corp": "크리스에프앤씨",
+   "code": "110790",
+   "market": "코스닥",
+   "title": "[첨부정정]주요사항보고서(전환사채권발행결정)",
+   "tag": "bad",
+   "word": "전환사채권발행결정",
+   "fix": true,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261119000091"
+  },
   {
    "no": "20261118900641",
    "date": "20261118",
@@ -452,6 +536,42 @@
    "word": "단일판매공급계약체결",
    "fix": true,
    "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118800107"
+  },
+  {
+   "no": "20261118000368",
+   "date": "20261119",
+   "corp": "나래나노텍",
+   "code": "137080",
+   "market": "코스닥",
+   "title": "[기재정정]주요사항보고서(자기주식취득결정)",
+   "tag": "good",
+   "word": "자기주식취득결정",
+   "fix": true,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118000368"
+  },
+  {
+   "no": "20261118000367",
+   "date": "20261119",
+   "corp": "판타지오",
+   "code": "032800",
+   "market": "코스닥",
+   "title": "[첨부정정]주요사항보고서(유상증자결정)",
+   "tag": "bad",
+   "word": "유상증자결정",
+   "fix": true,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118000367"
+  },
+  {
+   "no": "20261118000366",
+   "date": "20261119",
+   "corp": "GRT",
+   "code": "900290",
+   "market": "코스닥",
+   "title": "주요사항보고서(유상증자결정)",
+   "tag": "bad",
+   "word": "유상증자결정",
+   "fix": false,
+   "url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261118000366"
   },
   {
    "no": "20261118000351",
