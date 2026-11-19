@@ -1,6 +1,6 @@
 {
  "date": "20261119",
- "score": 31,
+ "score": 30,
  "label": "공포",
  "components": [
   {
@@ -12,14 +12,14 @@
   {
    "key": "breadth",
    "name": "시장 폭",
-   "score": 40,
-   "detail": "오른 종목 비율 46%"
+   "score": 39,
+   "detail": "오른 종목 비율 45%"
   },
   {
    "key": "highlow",
    "name": "신고가·신저가",
-   "score": 20,
-   "detail": "신고가 18종목, 신저가 73종목"
+   "score": 19,
+   "detail": "신고가 21종목, 신저가 89종목"
   },
   {
    "key": "volatility",
@@ -30,14 +30,14 @@
   {
    "key": "money",
    "name": "매수 거래대금",
-   "score": 29,
+   "score": 28,
    "detail": "오른 종목 거래대금 비중 41%"
   },
   {
    "key": "foreign",
    "name": "외국인 수급",
    "score": 45,
-   "detail": "최근 5일 순매수 -39,625억"
+   "detail": "최근 5일 순매수 -39,638억"
   }
  ],
  "kospi": {
@@ -63,7 +63,7 @@
   },
   {
    "date": "20261119",
-   "score": 31
+   "score": 30
   }
  ]
 }

@@ -413,7 +413,7 @@
           {
             "ticker": "010170",
             "name": "대한광통신",
-            "amount_eok": 242.6,
+            "amount_eok": 243.0,
             "streak_days": 2
           },
           {
@@ -425,43 +425,43 @@
           {
             "ticker": "068270",
             "name": "셀트리온",
-            "amount_eok": 162.6,
+            "amount_eok": 162.3,
+            "streak_days": 2
+          },
+          {
+            "ticker": "352820",
+            "name": "하이브",
+            "amount_eok": 133.5,
             "streak_days": 2
           },
           {
             "ticker": "003490",
             "name": "대한항공",
-            "amount_eok": 132.2,
+            "amount_eok": 130.4,
             "streak_days": 8
-          },
-          {
-            "ticker": "352820",
-            "name": "하이브",
-            "amount_eok": 131.2,
-            "streak_days": 2
           },
           {
             "ticker": "298040",
             "name": "효성중공업",
-            "amount_eok": 129.5,
+            "amount_eok": 129.4,
             "streak_days": 2
           },
           {
             "ticker": "373220",
             "name": "LG에너지솔루션",
-            "amount_eok": 96.8,
+            "amount_eok": 100.6,
             "streak_days": 2
           },
           {
             "ticker": "010950",
             "name": "S-Oil",
-            "amount_eok": 88.2,
+            "amount_eok": 88.3,
             "streak_days": 1
           },
           {
             "ticker": "028050",
             "name": "삼성E&A",
-            "amount_eok": 85.7,
+            "amount_eok": 86.2,
             "streak_days": 1
           },
           {
@@ -481,55 +481,55 @@
           {
             "ticker": "005935",
             "name": "삼성전자우",
-            "amount_eok": -1056.2,
+            "amount_eok": -1061.1,
             "streak_days": 1
           },
           {
             "ticker": "000660",
             "name": "SK하이닉스",
-            "amount_eok": -559.2,
+            "amount_eok": -559.7,
             "streak_days": 6
           },
           {
             "ticker": "012330",
             "name": "현대모비스",
-            "amount_eok": -320.1,
+            "amount_eok": -319.8,
             "streak_days": 4
           },
           {
             "ticker": "035900",
             "name": "JYP Ent.",
-            "amount_eok": -251.7,
+            "amount_eok": -247.3,
             "streak_days": 2
           },
           {
             "ticker": "403870",
             "name": "HPSP",
-            "amount_eok": -208.8,
+            "amount_eok": -209.9,
             "streak_days": 10
           },
           {
             "ticker": "032830",
             "name": "삼성생명",
-            "amount_eok": -196.7,
+            "amount_eok": -196.4,
+            "streak_days": 2
+          },
+          {
+            "ticker": "018260",
+            "name": "삼성에스디에스",
+            "amount_eok": -194.5,
             "streak_days": 2
           },
           {
             "ticker": "030530",
             "name": "원익홀딩스",
-            "amount_eok": -195.7,
+            "amount_eok": -192.2,
             "streak_days": 1
-          },
-          {
-            "ticker": "018260",
-            "name": "삼성에스디에스",
-            "amount_eok": -190.2,
-            "streak_days": 2
           },
           {
             "ticker": "277810",
             "name": "레인보우로보틱스",
-            "amount_eok": -176.3,
+            "amount_eok": -175.6,
             "streak_days": 1
           }
         ]
@@ -546,12 +546,12 @@
             {
               "ticker": "180640",
               "name": "한진칼",
-              "amount_eok": 488.5
+              "amount_eok": 490.0
             },
             {
               "ticker": "003490",
               "name": "대한항공",
-              "amount_eok": 462.8
+              "amount_eok": 461.0
             },
             {
               "ticker": "005380",
@@ -566,12 +566,12 @@
             {
               "ticker": "278470",
               "name": "에이피알",
-              "amount_eok": 371.4
+              "amount_eok": 370.3
             },
             {
               "ticker": "010170",
               "name": "대한광통신",
-              "amount_eok": 283.2
+              "amount_eok": 283.7
             },
             {
               "ticker": "011200",
@@ -579,36 +579,36 @@
               "amount_eok": 281.3
             },
             {
-              "ticker": "017670",
-              "name": "SK텔레콤",
-              "amount_eok": 259.7
-            },
-            {
               "ticker": "373220",
               "name": "LG에너지솔루션",
-              "amount_eok": 255.0
+              "amount_eok": 258.7
+            },
+            {
+              "ticker": "017670",
+              "name": "SK텔레콤",
+              "amount_eok": 249.7
             }
           ],
           "sell": [
             {
               "ticker": "005930",
               "name": "삼성전자",
-              "amount_eok": -13525.1
+              "amount_eok": -13525.2
             },
             {
               "ticker": "000660",
               "name": "SK하이닉스",
-              "amount_eok": -11957.3
+              "amount_eok": -11957.8
             },
             {
               "ticker": "005935",
               "name": "삼성전자우",
-              "amount_eok": -2328.2
+              "amount_eok": -2333.0
             },
             {
               "ticker": "009150",
               "name": "삼성전기",
-              "amount_eok": -1771.4
+              "amount_eok": -1772.2
             },
             {
               "ticker": "007660",
@@ -623,7 +623,7 @@
             {
               "ticker": "033780",
               "name": "KT&G",
-              "amount_eok": -789.9
+              "amount_eok": -789.8
             },
             {
               "ticker": "015760",
@@ -633,12 +633,12 @@
             {
               "ticker": "222800",
               "name": "심텍",
-              "amount_eok": -707.0
+              "amount_eok": -706.0
             },
             {
               "ticker": "012450",
               "name": "한화에어로스페이스",
-              "amount_eok": -614.8
+              "amount_eok": -614.7
             }
           ]
         },
@@ -648,74 +648,74 @@
             {
               "ticker": "034730",
               "name": "SK",
-              "amount_eok": 4172.4
+              "amount_eok": 4175.5
             },
             {
               "ticker": "035420",
               "name": "NAVER",
-              "amount_eok": 1707.8
+              "amount_eok": 1708.0
             },
             {
               "ticker": "028050",
               "name": "삼성E&A",
-              "amount_eok": 1603.4
+              "amount_eok": 1603.8
             },
             {
               "ticker": "003490",
               "name": "대한항공",
-              "amount_eok": 1539.7
+              "amount_eok": 1537.9
             },
             {
               "ticker": "079550",
               "name": "LIG디펜스앤에어로스페이스",
-              "amount_eok": 1459.6
+              "amount_eok": 1460.1
             },
             {
               "ticker": "096770",
               "name": "SK이노베이션",
-              "amount_eok": 1258.2
+              "amount_eok": 1256.4
             },
             {
               "ticker": "010140",
               "name": "삼성중공업",
-              "amount_eok": 1103.5
+              "amount_eok": 1103.4
             },
             {
               "ticker": "196170",
               "name": "알테오젠",
-              "amount_eok": 1051.9
+              "amount_eok": 1052.5
             },
             {
               "ticker": "278470",
               "name": "에이피알",
-              "amount_eok": 896.6
+              "amount_eok": 895.5
             },
             {
               "ticker": "000720",
               "name": "현대건설",
-              "amount_eok": 894.8
+              "amount_eok": 894.4
             }
           ],
           "sell": [
             {
               "ticker": "000660",
               "name": "SK하이닉스",
-              "amount_eok": -78503.5
+              "amount_eok": -78504.0
             },
             {
               "ticker": "005930",
               "name": "삼성전자",
-              "amount_eok": -24581.2
+              "amount_eok": -24581.3
             },
             {
               "ticker": "009150",
               "name": "삼성전기",
-              "amount_eok": -11328.1
+              "amount_eok": -11329.0
             },
             {
               "ticker": "005935",
               "name": "삼성전자우",
-              "amount_eok": -4705.3
+              "amount_eok": -4710.2
             },
             {
               "ticker": "006400",
@@ -725,17 +725,17 @@
             {
               "ticker": "402340",
               "name": "SK스퀘어",
-              "amount_eok": -2939.8
+              "amount_eok": -2936.7
             },
             {
               "ticker": "222800",
               "name": "심텍",
-              "amount_eok": -2842.2
+              "amount_eok": -2841.2
             },
             {
               "ticker": "032830",
               "name": "삼성생명",
-              "amount_eok": -2207.9
+              "amount_eok": -2207.6
             },
             {
               "ticker": "033780",
@@ -757,7 +757,7 @@
             "name": "삼성E&A",
             "prev_days": 12,
             "capped": false,
-            "amount_eok": 85.7
+            "amount_eok": 86.2
           },
           {
             "ticker": "078930",
@@ -771,18 +771,25 @@
             "name": "금호건설",
             "prev_days": 6,
             "capped": false,
-            "amount_eok": 15.0
+            "amount_eok": 15.1
           },
           {
-            "ticker": "200130",
-            "name": "콜마비앤에이치",
+            "ticker": "340810",
+            "name": "시선AI",
             "prev_days": 6,
             "capped": false,
-            "amount_eok": 1.4
+            "amount_eok": 1.5
           },
           {
             "ticker": "215600",
             "name": "신라젠",
+            "prev_days": 6,
+            "capped": false,
+            "amount_eok": 1.5
+          },
+          {
+            "ticker": "200130",
+            "name": "콜마비앤에이치",
             "prev_days": 6,
             "capped": false,
             "amount_eok": 1.3
@@ -795,25 +802,18 @@
             "amount_eok": 1.3
           },
           {
-            "ticker": "340810",
-            "name": "시선AI",
-            "prev_days": 6,
-            "capped": false,
-            "amount_eok": 1.2
-          },
-          {
             "ticker": "051910",
             "name": "LG화학",
             "prev_days": 5,
             "capped": false,
-            "amount_eok": 39.1
+            "amount_eok": 39.0
           },
           {
             "ticker": "394280",
             "name": "오픈엣지테크놀로지",
             "prev_days": 5,
             "capped": false,
-            "amount_eok": 1.8
+            "amount_eok": 1.9
           },
           {
             "ticker": "0117P0",
@@ -829,7 +829,7 @@
             "name": "에이피알",
             "prev_days": 8,
             "capped": false,
-            "amount_eok": -74.9
+            "amount_eok": -76.0
           },
           {
             "ticker": "005440",
@@ -843,7 +843,7 @@
             "name": "코세스",
             "prev_days": 5,
             "capped": false,
-            "amount_eok": -20.6
+            "amount_eok": -20.5
           }
         ]
       }
@@ -854,31 +854,31 @@
       "ticker": "352820",
       "name": "하이브",
       "pension_eok": 169.0,
-      "foreign_eok": 131.2
+      "foreign_eok": 133.5
     },
     {
       "ticker": "068270",
       "name": "셀트리온",
       "pension_eok": 89.8,
-      "foreign_eok": 162.6
+      "foreign_eok": 162.3
     },
     {
       "ticker": "010170",
       "name": "대한광통신",
       "pension_eok": 3.8,
-      "foreign_eok": 242.6
+      "foreign_eok": 243.0
     },
     {
       "ticker": "003490",
       "name": "대한항공",
       "pension_eok": 104.0,
-      "foreign_eok": 132.2
+      "foreign_eok": 130.4
     },
     {
       "ticker": "298040",
       "name": "효성중공업",
       "pension_eok": 30.3,
-      "foreign_eok": 129.5
+      "foreign_eok": 129.4
     },
     {
       "ticker": "078930",
@@ -889,26 +889,26 @@
     {
       "ticker": "035760",
       "name": "CJ ENM",
-      "pension_eok": 5.3,
-      "foreign_eok": 48.1
+      "pension_eok": 8.2,
+      "foreign_eok": 49.5
+    },
+    {
+      "ticker": "056080",
+      "name": "유진로봇",
+      "pension_eok": 2.4,
+      "foreign_eok": 54.0
     },
     {
       "ticker": "356860",
       "name": "티엘비",
       "pension_eok": 18.1,
-      "foreign_eok": 34.5
+      "foreign_eok": 33.4
     },
     {
       "ticker": "328130",
       "name": "루닛",
       "pension_eok": 15.8,
-      "foreign_eok": 20.6
-    },
-    {
-      "ticker": "131290",
-      "name": "티에스이",
-      "pension_eok": 33.6,
-      "foreign_eok": 1.8
+      "foreign_eok": 20.2
     }
   ],
   "settings": {
