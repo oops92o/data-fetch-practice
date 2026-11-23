@@ -154,6 +154,18 @@
   .lend.head div:first-child{text-align:left;}
   .lend .bal{color:var(--sub); font-size:12.5px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
   .chip.flat,.chip.small{color:var(--sub); opacity:.7;}
+  /* 외국인 현물·선물 카드 */
+  .fut-head{font-size:16px; font-weight:700; margin-bottom:3px;}
+  .fut-mean{font-size:13px; color:var(--sub); margin-bottom:10px;}
+  .fut-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:8px;}
+  .fut-grid .idx .v{font-size:16px;}
+  .fut-line{font-size:13px; padding:4px 0;}
+  .fut-row{display:grid; grid-template-columns:44px 1fr 1fr 74px; gap:6px; font-size:12.5px;
+           padding:6px 0; border-top:1px solid var(--line); align-items:center; font-variant-numeric:tabular-nums;}
+  .fut-row.head{color:var(--sub); font-size:11.5px;}
+  .fut-row div:nth-child(2), .fut-row div:nth-child(3){text-align:right;}
+  .fut-row div:last-child{text-align:right; color:var(--sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
   /* 수급 포착 한 줄: 이름 + 규칙들 + 숫자 */
   .sig{display:block; padding:10px 0; border-bottom:1px solid var(--line); color:inherit; text-decoration:none;}
   .sig:last-child{border-bottom:none;}
@@ -178,6 +190,20 @@
 <h1>내 수급 대시보드</h1>
 <p class="meta" id="meta">데이터 불러오는 중</p>
 <div id="alert"></div>
+
+<!-- 외국인 현물·선물 카드는 futures.json이 있을 때만 보여요 -->
+<div id="futArea" hidden>
+  <h2>외국인 현물·선물</h2>
+  <div class="card" id="futCard"></div>
+  <details class="how">
+    <summary>읽는 법</summary>
+    <p>선물 매수는 '지수가 오른다'에 거는 것, 현물 매수는 실제로 주식을 사는 거예요. 둘을 겹쳐 보면 외국인의 속내를 짐작할 수 있어요.</p>
+    <p><b class="buy">현물·선물 동시 매수</b>: 상승 쪽 확신이 커요. <b class="sell">동시 매도</b>: 하락 쪽 확신이 커요.</p>
+    <p><b>현물 매도 · 선물 매수</b>: 세 가지 중 하나예요. ① 반등에 먼저 거는 것 ② 걸어 둔 하락 보험(선물 매도)을 푸는 것 ③ 선물이 현물보다 쌀 때 나오는 차익거래. 다음 날 현물 매수가 따라오면 ①일 가능성이 커져요. 카드의 '어제 선물 베팅 → 오늘 현물' 줄이 그걸 확인해 줘요.</p>
+    <p><b>현물 매수 · 선물 매도</b>: 종목은 사면서 지수 하락은 막아 두는 헤지 모양이에요.</p>
+    <p>선물은 코스피200 선물의 정규장과 야간장을 합친 숫자예요. 야간장은 다음 날 아침에 확정돼서, 저녁에 본 최신 숫자는 아침에 조금 바뀔 수 있어요. 선물 ±500억, 현물 ±300억 안쪽은 중립으로 봐요.</p>
+  </details>
+</div>
 
 <!-- 수급 포착은 signals.json이 있을 때만 보여요 -->
 <div id="sigArea" hidden>
@@ -816,6 +842,61 @@ fetch("lending.json?t=" + Date.now())
     document.getElementById("lendArea").hidden = false;
   })
   .catch(() => { /* lending.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
+
+// ───────────────────────── 외국인 현물·선물 ─────────────────────────
+const FUT_CLS = {both_buy:"buy", both_sell:"sell", fut_only:"", hedge:"", mixed:""};
+const FUT_SHORT = {both_buy:"동시 매수", both_sell:"동시 매도", fut_only:"선물만 매수", hedge:"헤지 모양", mixed:"중립"};
+
+function eokText(v){ return v === null || v === undefined ? "-" : fmt(v); }
+
+fetch("futures.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(d => {
+    const card = document.getElementById("futCard");
+    const sm = d.summary;
+    const last = d.days[d.days.length - 1];
+    card.append(el("div", "fut-head " + FUT_CLS[sm.quad], sm.label),
+                el("div", "fut-mean", sm.meaning));
+
+    const grid = el("div", "fut-grid");
+    [["오늘 현물", last.spot_foreign], ["오늘 선물", last.fut_foreign],
+     ["5일 현물", sm.spot_5d], ["5일 선물", sm.fut_5d]].forEach(([k, v]) => {
+      const box = el("div", "idx");
+      box.append(el("div", "k", k), el("div", "v " + cls(v || 0), eokText(v)));
+      grid.appendChild(box);
+    });
+    card.appendChild(grid);
+
+    if(sm.fut_streak){
+      const n = Math.abs(sm.fut_streak);
+      card.appendChild(el("div", "fut-line",
+        "선물 " + (sm.fut_streak > 0 ? "순매수" : "순매도") + " " + n + "일째"));
+    }
+    if(sm.follow){
+      const t = {followed:["현물도 따라 샀어요 → 반등 베팅이었을 가능성↑", "buy"],
+                 not_yet:["현물은 아직 중립이에요 → 더 지켜봐야 해요", ""],
+                 failed:["현물은 계속 팔았어요 → 하루짜리 베팅·헤지 정리였을 가능성↑", "sell"]}[sm.follow.result];
+      const line = el("div", "fut-line");
+      line.append("어제(" + prettyDate(sm.follow.prev_date).slice(5) + ") 선물 베팅 → 오늘 현물: ");
+      line.appendChild(el("b", t[1], t[0]));
+      card.appendChild(line);
+    }
+
+    const head = el("div", "fut-row head");
+    head.append(el("div", "", "날짜"), el("div", "", "현물"), el("div", "", "선물"), el("div", "", "모양"));
+    card.appendChild(head);
+    d.days.slice(-5).reverse().forEach(r => {
+      const row = el("div", "fut-row");
+      row.append(el("div", "", prettyDate(r.date).slice(5)),
+                 el("div", "amt " + cls(r.spot_foreign || 0), eokText(r.spot_foreign)),
+                 el("div", "amt " + cls(r.fut_foreign || 0), eokText(r.fut_foreign)),
+                 el("div", FUT_CLS[r.quad], FUT_SHORT[r.quad] || r.label));
+      card.appendChild(row);
+    });
+    card.appendChild(el("p", "note", "기준일 " + prettyDate(d.date) + " · " + d.product + " · 단위 억 원"));
+    document.getElementById("futArea").hidden = false;
+  })
+  .catch(() => { /* futures.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 
 // ───────────────────────── 수급 포착 ─────────────────────────
 function drawSignals(hostId, items, side, empty){
