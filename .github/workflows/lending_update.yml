@@ -27,9 +27,14 @@ jobs:
       - name: 대차잔고 수집
         env:
           DATA_GO_KEY: ${{ secrets.DATA_GO_KEY }}
+          PYTHONUNBUFFERED: "1"      # 진행 상황이 로그에 바로바로 찍히게
+        timeout-minutes: 25          # 아무리 길어도 25분이면 멈춰요
         run: |
           for i in 1 2 3; do
-            python fetch_lending.py && exit 0
+            python fetch_lending.py
+            code=$?
+            if [ $code -eq 0 ]; then exit 0; fi
+            if [ $code -eq 2 ]; then echo "인증키 문제라 재시도하지 않아요"; exit 2; fi
             echo "실패 ($i/3), 5분 뒤 재시도"
             sleep 300
           done
