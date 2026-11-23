@@ -158,6 +158,25 @@
   .lend.head div:first-child{text-align:left;}
   .lend .bal{color:var(--sub); font-size:12.5px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
   .chip.flat,.chip.small{color:var(--sub); opacity:.7;}
+  /* 내 종목 트래킹 */
+  .w-top{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
+  .w-top .nm{font-size:17px; font-weight:700; color:inherit; text-decoration:none;}
+  .w-top .px{font-size:14px; font-variant-numeric:tabular-nums;}
+  .w-top .memo{font-size:12px; color:var(--sub);}
+  .w-status{font-size:15px; font-weight:700; margin:6px 0 2px;}
+  .w-sub{font-size:12.5px; color:var(--sub); margin-bottom:8px;}
+  .w-checks{display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; font-size:13px; margin:8px 0 10px;}
+  .w-checks .ok{color:var(--buy); font-weight:600;}
+  .w-checks .no{color:var(--sub);}
+  .w-tbl{display:grid; grid-template-columns:44px 1fr 1fr 1fr; gap:6px; font-size:12.5px; padding:6px 0;
+         border-top:1px solid var(--line); font-variant-numeric:tabular-nums; align-items:center;}
+  .w-tbl div:not(:first-child){text-align:right;}
+  .w-tbl.head{color:var(--sub); font-size:11.5px;}
+  .w-rule{font-size:13px; margin-top:2px;}
+  .w-bars{display:flex; align-items:center; gap:2px; height:44px; margin:6px 0 2px;}
+  .w-bars span{flex:1; display:block; border-radius:2px;}
+  .w-cap{font-size:11.5px; color:var(--sub); display:flex; justify-content:space-between;}
+
   /* 외국인 현물·선물 카드 */
   .fut-head{font-size:16px; font-weight:700; margin-bottom:3px;}
   .fut-mean{font-size:13px; color:var(--sub); margin-bottom:10px;}
@@ -194,6 +213,19 @@
 <h1>내 수급 대시보드</h1>
 <p class="meta" id="meta">데이터 불러오는 중</p>
 <div id="alert"></div>
+
+<!-- 내 종목 트래킹은 watch.json이 있을 때만 보여요 -->
+<div id="watchArea" hidden>
+  <h2>내 종목 트래킹</h2>
+  <div id="watchList"></div>
+  <details class="how">
+    <summary>읽는 법</summary>
+    <p><b>상태</b>는 파는 힘 세 가지로 정해요: 외국인 5일 순매도, 연기금 5일 순매도, 대차잔고 증가(공매도 대기). 셋 다면 <b class="sell">파는 힘 우세</b>, 하나도 없으면 <b class="buy">사는 힘 우세</b>, 그 사이는 <b>엇갈림</b>이에요.</p>
+    <p><b>회복 신호</b>는 파는 힘이 풀리는지 보는 체크리스트예요. 하나씩 켜지기 시작하면 압력이 약해지는 중이고, 넷 다 켜지면 흐름이 바뀌었다고 볼 만해요.</p>
+    <p>막대는 최근 20거래일 외국인+연기금 순매수 합계예요. 빨강은 순매수, 파랑은 순매도예요. 대차잔고는 하루 늦게 나오는 자료라 수급보다 하루 전 기준이에요.</p>
+    <p>종목을 더하거나 빼려면 저장소의 <code>watchlist.json</code>을 고치면 돼요.</p>
+  </details>
+</div>
 
 <!-- 외국인 현물·선물 카드는 futures.json이 있을 때만 보여요 -->
 <div id="futArea" hidden>
@@ -846,6 +878,97 @@ fetch("lending.json?t=" + Date.now())
     document.getElementById("lendArea").hidden = false;
   })
   .catch(() => { /* lending.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
+
+// ───────────────────────── 내 종목 트래킹 ─────────────────────────
+function streakText(n){
+  if(!n) return "";
+  return " (" + Math.abs(n) + "일째 " + (n > 0 ? "순매수" : "순매도") + ")";
+}
+
+function drawWatch(x){
+  const card = el("div", "card");
+  const top = el("div", "w-top");
+  const nm = el("a", "nm", x.name);
+  nm.href = "https://finance.naver.com/item/main.naver?code=" + x.ticker;
+  nm.target = "_blank"; nm.rel = "noopener";
+  top.append(nm,
+    el("span", "px " + cls(x.chg), x.close.toLocaleString("ko-KR") + "원 " + (x.chg > 0 ? "+" : "") + x.chg.toFixed(2) + "%"));
+  if(x.note) top.appendChild(el("span", "memo", x.note));
+  card.appendChild(top);
+
+  card.appendChild(el("div", "w-status " + (x.status === "mixed" ? "" : x.status), x.status_label));
+  card.appendChild(el("div", "w-sub", "파는 힘 " + x.pressure + "/3 · 20일 주가 " + pctText(x.ret20)));
+
+  if(x.rules && x.rules.length){
+    x.rules.forEach(r => card.appendChild(el("div", "w-rule " + (x.rule_side === "up" ? "buy" : "sell"), "· 수급 포착: " + r)));
+  }
+
+  const nOk = x.checks.filter(c => c.ok).length;
+  card.appendChild(el("div", "fut-line", "회복 신호 " + nOk + "/4"));
+  const ck = el("div", "w-checks");
+  x.checks.forEach(c => ck.appendChild(el("div", c.ok ? "ok" : "no", (c.ok ? "✓ " : "· ") + c.label)));
+  card.appendChild(ck);
+
+  // 20일 외국인+연기금 막대
+  const sums = x.days.map(d => d.foreign + d.pension);
+  const mx = Math.max(...sums.map(Math.abs), 1);
+  const bars = el("div", "w-bars");
+  sums.forEach(v => {
+    const b = document.createElement("span");
+    b.style.height = Math.max(3, Math.abs(v) / mx * 44) + "px";
+    b.style.background = v >= 0 ? "var(--buy)" : "var(--sell)";
+    b.style.alignSelf = "center";
+    bars.appendChild(b);
+  });
+  card.appendChild(bars);
+  card.appendChild((() => { const c = el("div", "w-cap");
+    c.append(el("span", "", prettyDate(x.days[0].date).slice(5)), el("span", "", "외국인+연기금 순매수"),
+             el("span", "", prettyDate(x.days[x.days.length - 1].date).slice(5))); return c; })());
+
+  const grid = el("div", "fut-grid");
+  grid.style.marginTop = "10px";
+  [["외국인 5일" + streakText(x.foreign.streak), x.foreign.d5, "eok"], ["연기금 5일" + streakText(x.pension.streak), x.pension.d5, "eok"],
+   ["외국인 20일", x.foreign.d20, "eok"], ["연기금 20일", x.pension.d20, "eok"]].forEach(([k, v]) => {
+    const box = el("div", "idx");
+    box.append(el("div", "k", k), el("div", "v " + cls(v), fmt(v)));
+    grid.appendChild(box);
+  });
+  if(x.lend){
+    const box = el("div", "idx");
+    box.append(el("div", "k", "대차잔고 " + fmt(x.lend.bal_eok).replace("+", "")),
+               el("div", "v " + lendCls(x.lend.chg5), "5일 " + pctText(x.lend.chg5)),
+               el("div", "c " + lendCls(x.lend.chg20), "20일 " + pctText(x.lend.chg20)));
+    grid.appendChild(box);
+    const box2 = el("div", "idx");
+    box2.append(el("div", "k", "대차 신호"), el("div", "v", LEND_LABEL[x.lend.signal]),
+                el("div", "c", "기준 " + prettyDate(x.lend.date).slice(5)));
+    grid.appendChild(box2);
+  }
+  card.appendChild(grid);
+
+  const head = el("div", "w-tbl head");
+  head.append(el("div", "", "날짜"), el("div", "", "등락"), el("div", "", "외국인"), el("div", "", "연기금"));
+  card.appendChild(head);
+  x.days.slice(-7).reverse().forEach(d => {
+    const r = el("div", "w-tbl");
+    r.append(el("div", "", prettyDate(d.date).slice(5)),
+             el("div", cls(d.chg), (d.chg > 0 ? "+" : "") + d.chg.toFixed(1) + "%"),
+             el("div", "amt " + cls(d.foreign), fmt(d.foreign)),
+             el("div", "amt " + cls(d.pension), fmt(d.pension)));
+    card.appendChild(r);
+  });
+  return card;
+}
+
+fetch("watch.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(d => {
+    if(!d.stocks || d.stocks.length === 0) return;
+    const host = document.getElementById("watchList");
+    d.stocks.forEach(x => host.appendChild(drawWatch(x)));
+    document.getElementById("watchArea").hidden = false;
+  })
+  .catch(() => { /* watch.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 
 // ───────────────────────── 외국인 현물·선물 ─────────────────────────
 const FUT_CLS = {both_buy:"buy", both_sell:"sell", fut_only:"", hedge:"", mixed:""};
