@@ -1,0 +1,208 @@
+{
+ "version": 1,
+ "date": "20261123",
+ "stocks": [
+  {
+   "ticker": "009150",
+   "name": "삼성전기",
+   "note": "보유",
+   "close": 797000,
+   "chg": 3.91,
+   "ret20": -35.0,
+   "status": "mixed",
+   "status_label": "엇갈림",
+   "pressure": 2,
+   "checks": [
+    {
+     "label": "외국인 순매수 전환",
+     "ok": true
+    },
+    {
+     "label": "연기금 순매수 전환",
+     "ok": true
+    },
+    {
+     "label": "대차잔고 5일 감소",
+     "ok": false
+    },
+    {
+     "label": "종가가 5일 평균 위",
+     "ok": false
+    }
+   ],
+   "foreign": {
+    "d1": 32.8,
+    "d5": -2699.1,
+    "d20": -12259.2,
+    "streak": 1
+   },
+   "pension": {
+    "d1": 80.4,
+    "d5": 144.0,
+    "d20": -2102.2,
+    "streak": 1
+   },
+   "lend": {
+    "date": "20261120",
+    "bal_eok": 24040.5,
+    "chg5": 11.9,
+    "chg20": 24.1,
+    "chg5_eok": 2555.1,
+    "signal": "short"
+   },
+   "lend_hist": [
+    {
+     "date": "20261120",
+     "bal_eok": 24040.5
+    }
+   ],
+   "rules": [
+    "연기금 1주 매도 + 대차 증가",
+    "외국인 1주 매도 + 대차 증가"
+   ],
+   "rule_side": "down",
+   "days": [
+    {
+     "date": "20261027",
+     "close": 1226000,
+     "chg": 9.66,
+     "foreign": 453.2,
+     "pension": -37.7
+    },
+    {
+     "date": "20261028",
+     "close": 1315000,
+     "chg": 7.26,
+     "foreign": -115.6,
+     "pension": -16.0
+    },
+    {
+     "date": "20261029",
+     "close": 1282000,
+     "chg": -2.51,
+     "foreign": 969.9,
+     "pension": 25.0
+    },
+    {
+     "date": "20261030",
+     "close": 1166000,
+     "chg": -9.05,
+     "foreign": -2214.1,
+     "pension": 214.3
+    },
+    {
+     "date": "20261102",
+     "close": 1206000,
+     "chg": 3.43,
+     "foreign": -766.5,
+     "pension": 46.8
+    },
+    {
+     "date": "20261103",
+     "close": 1126000,
+     "chg": -6.63,
+     "foreign": -1831.2,
+     "pension": -150.1
+    },
+    {
+     "date": "20261104",
+     "close": 1119000,
+     "chg": -0.62,
+     "foreign": -1175.3,
+     "pension": -26.7
+    },
+    {
+     "date": "20261105",
+     "close": 950000,
+     "chg": -15.1,
+     "foreign": -3473.7,
+     "pension": -1344.5
+    },
+    {
+     "date": "20261106",
+     "close": 894000,
+     "chg": -5.89,
+     "foreign": -532.5,
+     "pension": 272.7
+    },
+    {
+     "date": "20261109",
+     "close": 815000,
+     "chg": -8.84,
+     "foreign": -277.8,
+     "pension": 127.0
+    },
+    {
+     "date": "20261110",
+     "close": 870000,
+     "chg": 6.75,
+     "foreign": 631.7,
+     "pension": 14.5
+    },
+    {
+     "date": "20261111",
+     "close": 944000,
+     "chg": 8.51,
+     "foreign": 360.4,
+     "pension": 155.9
+    },
+    {
+     "date": "20261112",
+     "close": 873000,
+     "chg": -7.52,
+     "foreign": -120.8,
+     "pension": -503.8
+    },
+    {
+     "date": "20261113",
+     "close": 864000,
+     "chg": -1.03,
+     "foreign": -472.8,
+     "pension": -358.5
+    },
+    {
+     "date": "20261116",
+     "close": 779000,
+     "chg": -9.84,
+     "foreign": -995.0,
+     "pension": -665.1
+    },
+    {
+     "date": "20261117",
+     "close": 748000,
+     "chg": -3.98,
+     "foreign": -51.4,
+     "pension": -244.0
+    },
+    {
+     "date": "20261118",
+     "close": 820000,
+     "chg": 9.63,
+     "foreign": -96.2,
+     "pension": 42.8
+    },
+    {
+     "date": "20261119",
+     "close": 883000,
+     "chg": 7.68,
+     "foreign": -159.4,
+     "pension": 274.0
+    },
+    {
+     "date": "20261120",
+     "close": 767000,
+     "chg": -13.14,
+     "foreign": -2424.9,
+     "pension": -9.2
+    },
+    {
+     "date": "20261123",
+     "close": 797000,
+     "chg": 3.91,
+     "foreign": 32.8,
+     "pension": 80.4
+    }
+   ]
+  }
+ ]
+}
