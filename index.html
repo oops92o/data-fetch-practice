@@ -145,6 +145,20 @@
   .more{font:inherit; font-size:13.5px; width:100%; padding:10px; margin-top:8px; cursor:pointer;
         border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:10px;}
 
+  /* 대차잔고 한 줄: 이름 | 신호 | 잔고 | 20일 변화 */
+  .lend{display:grid; grid-template-columns:minmax(0,1fr) auto 62px 58px; gap:8px; align-items:center;
+        padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+  .lend:last-child{border-bottom:none;}
+  .lend.head{color:var(--sub); font-size:12px; padding:7px 0;}
+  .lend.head div{text-align:right;}
+  .lend.head div:first-child{text-align:left;}
+  .lend .bal{color:var(--sub); font-size:12.5px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .chip.flat,.chip.small{color:var(--sub); opacity:.7;}
+  .lend-sum{font-size:13px; padding:9px 0 7px; border-bottom:1px solid var(--line);}
+  details.how{font-size:12.5px; color:var(--sub); margin-top:8px;}
+  details.how summary{cursor:pointer; font-weight:600;}
+  details.how p{margin-top:5px;}
+
   .note{font-size:12.5px; color:var(--sub); margin-top:6px;}
   footer{color:var(--sub); font-size:12px; margin:22px 0 8px;}
 </style>
@@ -219,6 +233,30 @@
   <p class="note">같은 날 둘 다 순매수한 종목이에요. 두 금액을 합친 순서로 정렬했어요.</p>
 </div>
 
+<!-- 대차잔고 구역은 lending.json이 있을 때만 보여요 -->
+<div id="lendArea" hidden>
+  <h2>대차잔고 · 공매도 대기 물량</h2>
+  <div class="idx-row" id="lendMarket"></div>
+  <div id="lendWhoBox">
+    <h3><span class="who-name"></span> 순매수 상위 종목의 대차 상태</h3>
+    <div class="card" id="lendWho"></div>
+  </div>
+  <h3>대차잔고 급감 · 숏커버 후보</h3>
+  <div class="card" id="lendFall"></div>
+  <h3>대차잔고 급증 · 공매도 대기 증가</h3>
+  <div class="card" id="lendRise"></div>
+  <p class="note" id="lendNote"></p>
+  <details class="how">
+    <summary>읽는 법</summary>
+    <p>공매도를 하려면 먼저 주식을 빌려야 해요. 대차잔고는 빌려 간 뒤 아직 갚지 않은 주식이라, 공매도 대기 물량을 짐작하는 데 써요.</p>
+    <p><b class="buy">숏커버 진행</b>: 20일 동안 잔고가 10% 넘게 줄었고 최근 5일도 줄고 있어요. 빌린 주식을 갚으려고 되사는 중일 수 있어서 주가를 받쳐 주는 쪽이에요.</p>
+    <p><b class="sell">공매도 대기↑</b>: 20일 동안 10% 넘게 늘었고 최근 5일도 늘고 있어요. 주가를 누르는 힘이 쌓이는 중이에요.</p>
+    <p>'최근 상환·차입'은 5일 사이에만 5% 넘게 움직인 경우예요. 잔고가 10억 원보다 작으면 비율이 크게 출렁여서 신호를 붙이지 않아요.</p>
+    <p>순매수 상위에 숏커버가 겹치면 사는 힘과 갚는 힘이 같은 방향이라 더 눈여겨볼 만해요. 반대로 공매도 대기가 늘고 있으면, 사는 쪽과 파는 쪽이 맞서는 중이에요.</p>
+    <p>빌린 주식이 모두 공매도에 쓰이지는 않아요(차익거래, ETF 헤지 등). 방향과 속도를 보는 참고 지표로만 써 주세요.</p>
+  </details>
+</div>
+
 <!-- 공시 구역은 disclosures.json이 있을 때만 보여요 -->
 <div id="discArea" hidden>
   <h2>공시 알리미</h2>
@@ -229,7 +267,7 @@
 </div>
 
 <footer>
-  원자료: 한국거래소 투자자별 매매(확정치), 금융감독원 DART 공시. 연기금은 기관의 일부이고 국민연금만의 거래가 아니에요.<br>
+  원자료: 한국거래소 투자자별 매매(확정치), 금융감독원 DART 공시, 금융위원회 주식대차거래정보(공공데이터포털). 연기금은 기관의 일부이고 국민연금만의 거래가 아니에요.<br>
   공부용 정리이며 투자 권유가 아니에요.
 </footer>
 
@@ -376,6 +414,8 @@ function render(){
 
   document.getElementById("meta").textContent =
     "기준일 " + prettyDate(inv.date) + " 마감 확정치, 단위 억 원";
+
+  renderLendWho();   // 대차 구역도 고른 주체에 맞춰 다시 그려요
 }
 
 // 버튼 한 줄을 만들어요. 누르면 onPick(고른 키)가 실행돼요.
@@ -631,6 +671,100 @@ fetch("fear_greed.json?t=" + Date.now())
     document.getElementById("fgArea").hidden = false;
   })
   .catch(() => { /* fear_greed.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
+
+// ───────────────────────── 대차잔고 ─────────────────────────
+const LEND_LABEL = {cover:"숏커버 진행", cover2:"최근 상환", short:"공매도 대기↑",
+                    short2:"최근 차입", flat:"변화 작음", small:"잔고 작음"};
+const LEND_CHIP = {cover:"good", cover2:"good", short:"bad", short2:"bad", flat:"flat", small:"small"};
+let LEND = null;
+
+function pctText(v){
+  if(v === null || v === undefined) return "-";
+  return (v > 0 ? "+" : (v < 0 ? "−" : "")) + Math.abs(v).toFixed(1) + "%";
+}
+
+// 대차는 줄면 빨강(주가에 좋은 쪽), 늘면 파랑이라서 부호를 뒤집어 색을 골라요.
+function lendCls(v){ return v === null || v === undefined ? "" : cls(-v); }
+
+function lendHead(host, first){
+  const head = el("div", "lend head");
+  head.append(el("div", "", first), el("div", "", ""), el("div", "", "잔고"), el("div", "", "20일"));
+  host.appendChild(head);
+}
+
+function lendRow(name, s){
+  const row = el("div", "lend");
+  const sig = s ? s.signal : "small";
+  row.append(
+    el("div", "name", name),
+    el("span", "chip " + LEND_CHIP[sig], s ? LEND_LABEL[sig] : "자료 없음"),
+    el("div", "bal", s ? fmt(s.bal_eok).replace("+", "") : "-"),
+    el("div", "amt " + (s ? lendCls(s.chg20) : ""), s ? pctText(s.chg20) : "-")
+  );
+  return row;
+}
+
+function lendStock(ticker){
+  const v = LEND.stocks[ticker];
+  if(!v) return null;
+  const o = {};
+  LEND.fields.forEach((f, i) => o[f] = v[i]);
+  return o;
+}
+
+// 지금 고른 주체(연기금/외국인)의 오늘 순매수 상위 종목을 대차 상태와 함께 보여 줘요.
+function renderLendWho(){
+  if(!LEND) return;
+  const box = document.getElementById("lendWhoBox");
+  if(!DATA){ box.hidden = true; return; }
+  box.hidden = false;
+  const host = document.getElementById("lendWho");
+  host.innerHTML = "";
+  const buys = DATA.investors[who].today.buy || [];
+  const stats = buys.map(x => lendStock(x.ticker));
+  const nCover = stats.filter(s => s && (s.signal === "cover" || s.signal === "cover2")).length;
+  const nShort = stats.filter(s => s && (s.signal === "short" || s.signal === "short2")).length;
+  const sum = el("div", "lend-sum");
+  sum.append("상위 " + buys.length + "종목 중 ",
+             el("b", "buy", "상환 쪽 " + nCover), " · ",
+             el("b", "sell", "차입 쪽 " + nShort), "개");
+  host.appendChild(sum);
+  lendHead(host, "종목");
+  buys.forEach((x, i) => host.appendChild(lendRow(x.name, stats[i])));
+}
+
+function drawMovers(hostId, items, empty){
+  const host = document.getElementById(hostId);
+  host.innerHTML = "";
+  if(!items || items.length === 0){ host.appendChild(el("p", "note", empty)); return; }
+  lendHead(host, "종목");
+  items.forEach(x => host.appendChild(lendRow(x.name, lendStock(x.ticker))));
+}
+
+fetch("lending.json?t=" + Date.now())
+  .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+  .then(d => {
+    LEND = d;
+    const row = document.getElementById("lendMarket");
+    d.market.forEach(m => {
+      const box = el("div", "idx");
+      box.append(
+        el("div", "k", m.name + " 대차잔고"),
+        el("div", "v", m.bal_jo.toLocaleString("ko-KR", {maximumFractionDigits:1}) + "조"),
+        el("div", "c " + lendCls(m.chg20), "20일 " + pctText(m.chg20))
+      );
+      row.appendChild(box);
+    });
+    drawMovers("lendFall", d.falling, "20일 동안 잔고가 줄어든 큰 종목이 없어요.");
+    drawMovers("lendRise", d.rising, "20일 동안 잔고가 늘어난 큰 종목이 없어요.");
+    document.getElementById("lendNote").textContent =
+      "대차 기준일 " + prettyDate(d.date) + " (자료가 다음 날 오후에 나와서 수급보다 하루 늦을 수 있어요). " +
+      "20일은 " + prettyDate(d.compare.long) + "과 비교한 변화예요. 급감·급증 목록은 잔고 " +
+      d.settings.mover_min_eok + "억 원 이상인 종목만 골랐어요. 숫자 색은 줄면 빨강, 늘면 파랑이에요.";
+    renderLendWho();
+    document.getElementById("lendArea").hidden = false;
+  })
+  .catch(() => { /* lending.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 
 // ───────────────────────── 공시 알리미 ─────────────────────────
 const TAG_LABEL = {good:"호재성", bad:"악재성", earn:"실적", watch:"관심"};
