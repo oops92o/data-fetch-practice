@@ -99,10 +99,14 @@ def today_top(daily, days, names, top_n=TOP_N):
                 break
         return n
 
+    def week(ticker):
+        """최근 5거래일 순매수 합계(억). 대차잔고 5일 변화와 나란히 비교할 때 써요."""
+        return round(sum(daily[d].get(ticker, 0.0) for d in days[-5:]), 1)
+
     def pack(pairs):
         return [
             {"ticker": t, "name": names.get(t, t), "amount_eok": round(v, 1),
-             "streak_days": streak(t, v)}
+             "streak_days": streak(t, v), "week_eok": week(t)}
             for t, v in pairs
         ]
 

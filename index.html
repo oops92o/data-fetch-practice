@@ -154,6 +154,8 @@
   .lend.head div:first-child{text-align:left;}
   .lend .bal{color:var(--sub); font-size:12.5px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
   .chip.flat,.chip.small{color:var(--sub); opacity:.7;}
+  .lend .vs{grid-column:1 / -1; font-size:12.5px; color:var(--sub); margin-top:-3px;}
+  .lend .vs b{font-weight:700;}
   .lend-sum{font-size:13px; padding:9px 0 7px; border-bottom:1px solid var(--line);}
   details.how{font-size:12.5px; color:var(--sub); margin-top:8px;}
   details.how summary{cursor:pointer; font-weight:600;}
@@ -253,6 +255,8 @@
     <p><b class="sell">공매도 대기↑</b>: 20일 동안 10% 넘게 늘었고 최근 5일도 늘고 있어요. 주가를 누르는 힘이 쌓이는 중이에요.</p>
     <p>'최근 상환·차입'은 5일 사이에만 5% 넘게 움직인 경우예요. 잔고가 10억 원보다 작으면 비율이 크게 출렁여서 신호를 붙이지 않아요.</p>
     <p>순매수 상위에 숏커버가 겹치면 사는 힘과 갚는 힘이 같은 방향이라 더 눈여겨볼 만해요. 반대로 공매도 대기가 늘고 있으면, 사는 쪽과 파는 쪽이 맞서는 중이에요.</p>
+    <p>종목 아래 줄은 크기 비교예요. 최근 5거래일 순매수 금액과, 같은 기간 대차잔고가 늘거나 준 양을 종가로 환산한 금액을 나란히 놓았어요. 대차가 줄면 '같은 방향', 대차가 늘었는데 순매수가 더 크면 '매수 우세', 대차 증가가 더 크면 '대기 우세'예요. ×숫자는 몇 배 큰지예요. 5일 잔고 변화가 5%보다 작으면 '대차 거의 그대로'로 두고 비교하지 않아요.</p>
+    <p>12월 하순에는 배당·의결권을 받으려고 빌려준 주식을 회수해서 시장 전체 잔고가 계절적으로 줄어요. 이때 뜨는 숏커버 신호는 덜 믿어 주세요.</p>
     <p>빌린 주식이 모두 공매도에 쓰이지는 않아요(차익거래, ETF 헤지 등). 방향과 속도를 보는 참고 지표로만 써 주세요.</p>
   </details>
 </div>
@@ -692,7 +696,32 @@ function lendHead(host, first){
   host.appendChild(head);
 }
 
-function lendRow(name, s){
+// 5일 순매수 금액과 5일 대차잔고 변화 금액을 나란히 놓고, 어느 쪽이 큰지 한마디로 정리해요.
+function vsLine(buyEok, s){
+  if(!s || s.chg5_eok === null || s.chg5_eok === undefined || s.signal === "small") return null;
+  const line = el("div", "vs");
+  const lend = s.chg5_eok;
+  const parts = [];
+  if(buyEok !== undefined) parts.push("5일 매수 " + fmt(buyEok));
+  parts.push("대차 " + (lend > 0 ? "+" : (lend < 0 ? "−" : "")) + fmt(Math.abs(lend)).replace("+", ""));
+  line.append(parts.join(" · ") + " → ");
+  let verdict, c;
+  if(Math.abs(s.chg5) < LEND.settings.soft){
+    verdict = "대차 거의 그대로"; c = "";            // 잔고에 비해 5일 변화가 작으면 비교하지 않아요
+  } else if(buyEok === undefined){
+    verdict = lend > 0 ? "차입 증가" : "상환 증가"; c = lend > 0 ? "sell" : "buy";
+  } else if(lend < 0){
+    verdict = buyEok > 0 ? "같은 방향" : "상환 중"; c = "buy";
+  } else if(buyEok >= lend){
+    verdict = "매수 우세 ×" + (buyEok / lend).toFixed(1); c = "buy";
+  } else {
+    verdict = buyEok > 0 ? "대기 우세 ×" + (lend / buyEok).toFixed(1) : "대기 우세"; c = "sell";
+  }
+  line.appendChild(el("b", c, verdict));
+  return line;
+}
+
+function lendRow(name, s, buyEok){
   const row = el("div", "lend");
   const sig = s ? s.signal : "small";
   row.append(
@@ -701,6 +730,10 @@ function lendRow(name, s){
     el("div", "bal", s ? fmt(s.bal_eok).replace("+", "") : "-"),
     el("div", "amt " + (s ? lendCls(s.chg20) : ""), s ? pctText(s.chg20) : "-")
   );
+  if(buyEok !== null){
+    const vs = vsLine(buyEok, s);
+    if(vs) row.appendChild(vs);
+  }
   return row;
 }
 
@@ -730,7 +763,7 @@ function renderLendWho(){
              el("b", "sell", "차입 쪽 " + nShort), "개");
   host.appendChild(sum);
   lendHead(host, "종목");
-  buys.forEach((x, i) => host.appendChild(lendRow(x.name, stats[i])));
+  buys.forEach((x, i) => host.appendChild(lendRow(x.name, stats[i], x.week_eok)));
 }
 
 function drawMovers(hostId, items, empty){
@@ -738,7 +771,7 @@ function drawMovers(hostId, items, empty){
   host.innerHTML = "";
   if(!items || items.length === 0){ host.appendChild(el("p", "note", empty)); return; }
   lendHead(host, "종목");
-  items.forEach(x => host.appendChild(lendRow(x.name, lendStock(x.ticker))));
+  items.forEach(x => host.appendChild(lendRow(x.name, lendStock(x.ticker), null)));
 }
 
 fetch("lending.json?t=" + Date.now())

@@ -188,8 +188,12 @@ def build(snap, days):
         c20 = pct(x["bal"], d20[t]["bal"]) if t in d20 else None
         lent5 = sum(r[t]["lent"] for r in recent if t in r)
         repaid5 = sum(r[t]["repaid"] for r in recent if t in r)
+        # 잔고 주식 수가 늘거나 준 만큼을 오늘 종가로 환산한 금액(억). 순매수 금액과 나란히 비교하려고요.
+        price = x["bal_amt"] / x["bal"] if x["bal"] > 0 else 0
+        d5_eok = round((x["bal"] - d5[t]["bal"]) * price / EOK, 1) if t in d5 else None
+        d20_eok = round((x["bal"] - d20[t]["bal"]) * price / EOK, 1) if t in d20 else None
         stocks[t] = [x["name"], bal_eok, c5, c20, signal(bal_eok, c5, c20),
-                     round(repaid5 / lent5, 2) if lent5 > 0 else None]
+                     round(repaid5 / lent5, 2) if lent5 > 0 else None, d5_eok, d20_eok]
 
     # 시장 전체 잔고 금액 합계
     def total(day_snap, market):
@@ -215,8 +219,8 @@ def build(snap, days):
         "market": market,
         "falling": [x for x in falling if x["chg20"] < 0],
         "rising": [x for x in rising if x["chg20"] > 0],
-        # 종목마다 [이름, 잔고(억), 5일 변화%, 20일 변화%, 신호, 최근 5일 상환÷체결]
-        "fields": ["name", "bal_eok", "chg5", "chg20", "signal", "repay_ratio5"],
+        # 종목마다 [이름, 잔고(억), 5일 변화%, 20일 변화%, 신호, 최근 5일 상환÷체결, 5일 변화(억), 20일 변화(억)]
+        "fields": ["name", "bal_eok", "chg5", "chg20", "signal", "repay_ratio5", "chg5_eok", "chg20_eok"],
         "stocks": stocks,
     }
 
