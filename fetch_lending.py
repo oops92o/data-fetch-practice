@@ -16,6 +16,7 @@ GitHub Actions가 이 스크립트를 매일 대신 실행해줍니다.
 
 import json
 import os
+import sys
 import time
 from datetime import datetime, timedelta, timezone
 from urllib.parse import unquote
@@ -40,7 +41,8 @@ KST = timezone(timedelta(hours=9))
 def service_key():
     key = os.environ.get("DATA_GO_KEY", "").strip()
     if not key:
-        raise SystemExit("DATA_GO_KEY 가 비어 있어요. 저장소 Settings → Secrets 에 인증키를 넣어 주세요.")
+        print("DATA_GO_KEY 가 비어 있어요. 저장소 Settings → Secrets 에 인증키를 넣어 주세요.")
+        sys.exit(2)   # 2 = 다시 해도 소용없는 오류 (워크플로가 5분 기다리지 않고 바로 멈춰요)
     # 'Encoding' 키를 넣었어도 동작하게, % 가 들어 있으면 한 번 풀어 줘요.
     return unquote(key) if "%" in key else key
 
@@ -59,9 +61,10 @@ def call(day, market, rows, page=1):
             if not text.startswith("{"):
                 # 인증키 문제면 JSON 대신 XML 오류가 와요.
                 if "SERVICE_KEY" in text or "SERVICE KEY" in text:
-                    raise SystemExit(
+                    print(
                         "인증키 오류예요. ① 활용신청이 승인됐는지 ② 'Decoding' 키를 넣었는지 확인해 주세요. "
                         "새로 받은 키는 1시간쯤 지나야 동작하기도 해요.\n응답: " + text[:300])
+                    sys.exit(2)
                 raise RuntimeError("JSON 이 아닌 응답: " + text[:300])
             body = parse(res.json())
             return body
