@@ -22,7 +22,7 @@ jobs:
           python-version: "3.11"
 
       - name: 라이브러리 설치
-        run: pip install requests
+        run: pip install requests pykrx
 
       - name: 대차잔고 수집
         env:
@@ -40,14 +40,33 @@ jobs:
           done
           exit 1
 
+      - name: 외국인 현물·선물 수집 (코스피200 선물, 정규+야간)
+        if: always()            # 대차 수집이 실패해도 이 단계는 시도해요
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+          PYTHONUNBUFFERED: "1"
+        timeout-minutes: 15
+        run: |
+          for i in 1 2 3; do
+            python fetch_futures.py && exit 0
+            echo "실패 ($i/3), 2분 뒤 재시도"
+            sleep 120
+          done
+          exit 1
+
       - name: 수급 포착 (대차 + 연기금·외국인 겹쳐 보기)
+        if: always()
         run: python signals.py
 
       - name: 결과 커밋
+        if: always()            # 하나만 성공해도 그 결과는 저장해요
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add lending.json signals.json
+          for f in lending.json signals.json futures.json; do
+            if [ -f "$f" ]; then git add "$f"; fi
+          done
           git commit -m "대차잔고 업데이트" || echo "변경 없음"
           git pull --rebase
           git push
