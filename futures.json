@@ -1,0 +1,140 @@
+{
+ "version": 1,
+ "date": "20261123",
+ "product": "코스피200 선물 (정규+야간)",
+ "settings": {
+  "fut_flat": 500,
+  "spot_flat": 300
+ },
+ "summary": {
+  "quad": "fut_only",
+  "label": "현물 매도 · 선물 매수",
+  "meaning": "반등 베팅·헤지 풀기·차익거래 중 하나예요. 다음 날 현물이 따라오는지 보세요",
+  "fut_streak": 1,
+  "fut_5d": 7679.4,
+  "spot_5d": -34439.7,
+  "follow": null
+ },
+ "days": [
+  {
+   "date": "20261110",
+   "fut_foreign": -368.2,
+   "fut_foreign_qty": -145,
+   "fut_inst": 1718.8,
+   "fut_indiv": -1232.0,
+   "spot_foreign": 4439.1,
+   "spot_inst": 4641.5,
+   "spot_indiv": -13947.1,
+   "quad": "mixed",
+   "label": "뚜렷하지 않음"
+  },
+  {
+   "date": "20261111",
+   "fut_foreign": -7941.0,
+   "fut_foreign_qty": -3805,
+   "fut_inst": 6273.3,
+   "fut_indiv": 1292.8,
+   "spot_foreign": 6729.2,
+   "spot_inst": -5034.1,
+   "spot_indiv": -7144.9,
+   "quad": "hedge",
+   "label": "현물 매수 · 선물 매도"
+  },
+  {
+   "date": "20261112",
+   "fut_foreign": 925.8,
+   "fut_foreign_qty": 468,
+   "fut_inst": -1305.2,
+   "fut_indiv": 86.5,
+   "spot_foreign": 4121.3,
+   "spot_inst": -6526.4,
+   "spot_indiv": -2785.1,
+   "quad": "both_buy",
+   "label": "현물·선물 동시 매수"
+  },
+  {
+   "date": "20261113",
+   "fut_foreign": 5663.5,
+   "fut_foreign_qty": 2729,
+   "fut_inst": -5136.9,
+   "fut_indiv": -24.4,
+   "spot_foreign": -5419.2,
+   "spot_inst": -59.1,
+   "spot_indiv": 145.0,
+   "quad": "fut_only",
+   "label": "현물 매도 · 선물 매수"
+  },
+  {
+   "date": "20261116",
+   "fut_foreign": 3978.8,
+   "fut_foreign_qty": 1991,
+   "fut_inst": -4185.5,
+   "fut_indiv": 269.8,
+   "spot_foreign": -13299.5,
+   "spot_inst": -4635.2,
+   "spot_indiv": 12989.8,
+   "quad": "fut_only",
+   "label": "현물 매도 · 선물 매수"
+  },
+  {
+   "date": "20261117",
+   "fut_foreign": 5799.6,
+   "fut_foreign_qty": 2989,
+   "fut_inst": -7420.9,
+   "fut_indiv": 1867.0,
+   "spot_foreign": -14189.9,
+   "spot_inst": 5133.8,
+   "spot_indiv": 4309.7,
+   "quad": "fut_only",
+   "label": "현물 매도 · 선물 매수"
+  },
+  {
+   "date": "20261118",
+   "fut_foreign": -504.5,
+   "fut_foreign_qty": -232,
+   "fut_inst": 2771.4,
+   "fut_indiv": -2267.6,
+   "spot_foreign": -2643.6,
+   "spot_inst": 4164.7,
+   "spot_indiv": -6168.8,
+   "quad": "both_sell",
+   "label": "현물·선물 동시 매도"
+  },
+  {
+   "date": "20261119",
+   "fut_foreign": -2824.3,
+   "fut_foreign_qty": -1430,
+   "fut_inst": 2546.2,
+   "fut_indiv": 159.7,
+   "spot_foreign": -4085.6,
+   "spot_inst": 119.8,
+   "spot_indiv": -560.5,
+   "quad": "both_sell",
+   "label": "현물·선물 동시 매도"
+  },
+  {
+   "date": "20261120",
+   "fut_foreign": -649.2,
+   "fut_foreign_qty": -314,
+   "fut_inst": -474.4,
+   "fut_indiv": 813.0,
+   "spot_foreign": -10956.0,
+   "spot_inst": -9330.2,
+   "spot_indiv": 15214.4,
+   "quad": "both_sell",
+   "label": "현물·선물 동시 매도"
+  },
+  {
+   "date": "20261123",
+   "fut_foreign": 5857.8,
+   "fut_foreign_qty": 3211,
+   "fut_inst": -3878.6,
+   "fut_indiv": -1580.3,
+   "spot_foreign": -2564.6,
+   "spot_inst": 1762.8,
+   "spot_indiv": -3532.4,
+   "quad": "fut_only",
+   "label": "현물 매도 · 선물 매수"
+  }
+ ]
+}
