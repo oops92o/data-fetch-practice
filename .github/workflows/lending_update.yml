@@ -40,11 +40,14 @@ jobs:
           done
           exit 1
 
+      - name: 수급 포착 (대차 + 연기금·외국인 겹쳐 보기)
+        run: python signals.py
+
       - name: 결과 커밋
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add lending.json
+          git add lending.json signals.json
           git commit -m "대차잔고 업데이트" || echo "변경 없음"
           git pull --rebase
           git push
