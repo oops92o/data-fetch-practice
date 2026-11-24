@@ -184,6 +184,86 @@ def quad(spot, fut):
     return ("mixed", "뚜렷하지 않음", "한쪽이 중립 범위 안이라 방향을 말하기 어려워요")
 
 
+# ── 4. 외국인 수급과 코스피는 얼마나 같이 움직이나 ──────────────────────
+CORR_SINCE = "20261001"   # ① 누적 비교를 시작할 날 (블로그가 말한 '10월 이후')
+
+
+def pearson(xs, ys):
+    """상관계수: −1(정반대) ~ 0(무관) ~ +1(똑같이)"""
+    n = len(xs)
+    if n < 5:
+        return None
+    mx, my = sum(xs) / n, sum(ys) / n
+    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    sxx = sum((x - mx) ** 2 for x in xs)
+    syy = sum((y - my) ** 2 for y in ys)
+    if sxx == 0 or syy == 0:
+        return None
+    return round(sxy / (sxx * syy) ** 0.5, 2)
+
+
+def hit_rate(xs, ys):
+    """외국인이 산 날 오르고 판 날 내린 비율(%). 블로그의 '날마다 맞아떨어졌다'를 그대로 세요."""
+    pairs = [(x, y) for x, y in zip(xs, ys) if x != 0 and y != 0]
+    if not pairs:
+        return None
+    return round(sum((x > 0) == (y > 0) for x, y in pairs) / len(pairs) * 100)
+
+
+def corr_block(end_day):
+    try:
+        from pykrx import stock
+        start = (datetime.strptime(min(CORR_SINCE, end_day), "%Y%m%d") - timedelta(days=60)).strftime("%Y%m%d")
+        flow = stock.get_market_trading_value_by_date(start, end_day, "KOSPI")
+        idx = stock.get_index_ohlcv_by_date(start, end_day, "1001")
+        closes = {d.strftime("%Y%m%d"): float(c) for d, c in zip(idx.index, idx["종가"])}
+        foreign = {d.strftime("%Y%m%d"): float(v) / EOK for d, v in zip(flow.index, flow["외국인합계"])}
+        days = sorted(d for d in closes if d in foreign)
+        ret = {days[i]: (closes[days[i]] / closes[days[i - 1]] - 1) * 100 for i in range(1, len(days))}
+        rdays = [d for d in days if d in ret]
+
+        # ① 누적(수준) 비교: 10월 이후 외국인 누적 순매수 선 vs 코스피 지수 선
+        lv = [d for d in days if d >= CORR_SINCE]
+        cum, acc = [], 0.0
+        for d in lv:
+            acc += foreign[d]
+            cum.append(acc)
+        level = pearson(cum, [closes[d] for d in lv])
+
+        def daily(n):
+            ds = rdays[-n:]
+            xs, ys = [foreign[d] for d in ds], [ret[d] for d in ds]
+            return {"r": pearson(xs, ys), "hit": hit_rate(xs, ys), "n": len(ds)}
+
+        # ③ 오늘 외국인 → 다음 날 코스피
+        ds = rdays[-61:]
+        lead_x = [foreign[ds[i]] for i in range(len(ds) - 1)]
+        lead_y = [ret[ds[i + 1]] for i in range(len(ds) - 1)]
+        lead = {"r": pearson(lead_x, lead_y), "hit": hit_rate(lead_x, lead_y), "n": len(lead_x)}
+
+        d20, d60 = daily(20), daily(60)
+        notes = []
+        if level is not None and d20["r"] is not None:
+            if level >= 0.8 and d20["r"] < 0.6:
+                notes.append("큰 흐름(누적)은 거의 같이 갔지만, 하루하루는 그보다 덜 맞아요")
+            elif d20["r"] >= 0.6:
+                notes.append("하루 단위로도 외국인이 시장을 끌고 가는 장이에요")
+            else:
+                notes.append("외국인 말고 다른 힘(개인·기관·연기금 등)도 시장을 움직이고 있어요")
+        if d20["r"] is not None and d60["r"] is not None and d20["r"] - d60["r"] >= 0.15:
+            notes.append("최근 20일 들어 외국인 영향력이 더 세졌어요")
+        elif d20["r"] is not None and d60["r"] is not None and d60["r"] - d20["r"] >= 0.15:
+            notes.append("최근 20일 들어 외국인 영향력이 약해졌어요")
+        if lead["r"] is not None and abs(lead["r"]) < 0.2:
+            notes.append("오늘 외국인 수급으로 내일 코스피를 맞히기는 어려워요")
+
+        return {"since": lv[0] if lv else None, "end": end_day, "level": level,
+                "daily20": d20, "daily60": d60, "lead": lead, "notes": notes}
+    except Exception as e:
+        print("  상관계수 계산 실패(나머지는 그대로 저장):", e)
+        return None
+
+
 def vkospi_block(rows):
     """VKOSPI 카드에 들어갈 숫자들. 실패해도 나머지 카드는 살아 있게 None 을 돌려줘요."""
     try:
@@ -282,6 +362,7 @@ def main():
         },
         "days": rows[-DAYS:],
         "vkospi": vkospi_block(rows),
+        "corr": corr_block(rows[-1]["date"]),
     }
     with open("futures.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=1)
