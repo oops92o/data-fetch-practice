@@ -1,33 +1,24 @@
 {
  "version": 1,
- "date": "20261123",
+ "date": "20261124",
  "product": "코스피200 선물 (정규+야간)",
  "settings": {
   "fut_flat": 500,
   "spot_flat": 300
  },
  "summary": {
-  "quad": "fut_only",
-  "label": "현물 매도 · 선물 매수",
-  "meaning": "반등 베팅·헤지 풀기·차익거래 중 하나예요. 다음 날 현물이 따라오는지 보세요",
-  "fut_streak": 1,
-  "fut_5d": 7679.4,
-  "spot_5d": -34439.7,
-  "follow": null
+  "quad": "mixed",
+  "label": "뚜렷하지 않음",
+  "meaning": "한쪽이 중립 범위 안이라 방향을 말하기 어려워요",
+  "fut_streak": 2,
+  "fut_5d": 2042.6,
+  "spot_5d": -16486.9,
+  "follow": {
+   "prev_date": "20261123",
+   "result": "followed"
+  }
  },
  "days": [
-  {
-   "date": "20261110",
-   "fut_foreign": -368.2,
-   "fut_foreign_qty": -145,
-   "fut_inst": 1718.8,
-   "fut_indiv": -1232.0,
-   "spot_foreign": 4439.1,
-   "spot_inst": 4641.5,
-   "spot_indiv": -13947.1,
-   "quad": "mixed",
-   "label": "뚜렷하지 않음"
-  },
   {
    "date": "20261111",
    "fut_foreign": -7941.0,
@@ -135,6 +126,18 @@
    "spot_indiv": -3532.4,
    "quad": "fut_only",
    "label": "현물 매도 · 선물 매수"
+  },
+  {
+   "date": "20261124",
+   "fut_foreign": 162.8,
+   "fut_foreign_qty": 46,
+   "fut_inst": 429.3,
+   "fut_indiv": -649.6,
+   "spot_foreign": 3762.9,
+   "spot_inst": 480.9,
+   "spot_indiv": -5041.3,
+   "quad": "mixed",
+   "label": "뚜렷하지 않음"
   }
  ]
 }

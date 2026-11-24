@@ -1,25 +1,25 @@
 {
  "version": 1,
- "date": "20261123",
+ "date": "20261124",
  "stocks": [
   {
    "ticker": "009150",
    "name": "삼성전기",
    "note": "보유",
-   "close": 797000,
-   "chg": 3.91,
-   "ret20": -35.0,
+   "close": 875000,
+   "chg": 9.79,
+   "ret20": -33.5,
    "status": "mixed",
    "status_label": "엇갈림",
    "pressure": 2,
    "checks": [
     {
      "label": "외국인 순매수 전환",
-     "ok": true
+     "ok": false
     },
     {
      "label": "연기금 순매수 전환",
-     "ok": true
+     "ok": false
     },
     {
      "label": "대차잔고 5일 감소",
@@ -27,20 +27,20 @@
     },
     {
      "label": "종가가 5일 평균 위",
-     "ok": false
+     "ok": true
     }
    ],
    "foreign": {
-    "d1": 32.8,
-    "d5": -2699.1,
-    "d20": -12259.2,
-    "streak": 1
+    "d1": 0.0,
+    "d5": -2647.7,
+    "d20": -12712.4,
+    "streak": 0
    },
    "pension": {
-    "d1": 80.4,
-    "d5": 144.0,
-    "d20": -2102.2,
-    "streak": 1
+    "d1": 0.0,
+    "d5": 388.0,
+    "d20": -2064.5,
+    "streak": 0
    },
    "lend": {
     "date": "20261123",
@@ -66,13 +66,6 @@
    ],
    "rule_side": "down",
    "days": [
-    {
-     "date": "20261027",
-     "close": 1226000,
-     "chg": 9.66,
-     "foreign": 453.2,
-     "pension": -37.7
-    },
     {
      "date": "20261028",
      "close": 1315000,
@@ -205,6 +198,13 @@
      "chg": 3.91,
      "foreign": 32.8,
      "pension": 80.4
+    },
+    {
+     "date": "20261124",
+     "close": 875000,
+     "chg": 9.79,
+     "foreign": 0.0,
+     "pension": 0.0
     }
    ]
   }
