@@ -177,6 +177,15 @@
   .w-bars span{flex:1; display:block; border-radius:2px;}
   .w-cap{font-size:11.5px; color:var(--sub); display:flex; justify-content:space-between;}
 
+  /* VKOSPI 카드 */
+  .vk-top{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
+  .vk-top .big{font-size:26px; font-weight:800; font-variant-numeric:tabular-nums;}
+  .vk-zone{font-size:12px; font-weight:700; padding:2px 8px; border-radius:999px; border:1px solid currentColor;}
+  .vk-zone.calm{color:var(--buy);} .vk-zone.normal{color:var(--sub);}
+  .vk-zone.high{color:#d97706;} .vk-zone.extreme{color:var(--sell);}
+  .vk-spark{width:100%; height:70px; display:block; margin:8px 0 2px;}
+  .vk-note{font-size:13px; padding:8px 10px; border-radius:8px; background:var(--line); margin-top:8px;}
+
   /* 외국인 현물·선물 카드 */
   .fut-head{font-size:16px; font-weight:700; margin-bottom:3px;}
   .fut-mean{font-size:13px; color:var(--sub); margin-bottom:10px;}
@@ -231,6 +240,8 @@
 
 <!-- 외국인 현물·선물 카드는 futures.json이 있을 때만 보여요 -->
 <div id="futArea" hidden>
+  <h2>변동성 · VKOSPI</h2>
+  <div class="card" id="vkCard" hidden></div>
   <h2>외국인 현물·선물</h2>
   <div class="card" id="futCard"></div>
   <details class="how">
@@ -239,6 +250,8 @@
     <p><b class="buy">현물·선물 동시 매수</b>: 상승 쪽 확신이 커요. <b class="sell">동시 매도</b>: 하락 쪽 확신이 커요.</p>
     <p><b>현물 매도 · 선물 매수</b>: 세 가지 중 하나예요. ① 반등에 먼저 거는 것 ② 걸어 둔 하락 보험(선물 매도)을 푸는 것 ③ 선물이 현물보다 쌀 때 나오는 차익거래. 다음 날 현물 매수가 따라오면 ①일 가능성이 커져요. 카드의 '어제 선물 베팅 → 오늘 현물' 줄이 그걸 확인해 줘요.</p>
     <p><b>현물 매수 · 선물 매도</b>: 종목은 사면서 지수 하락은 막아 두는 헤지 모양이에요.</p>
+    <p><b>VKOSPI</b>는 옵션 가격으로 거꾸로 계산한 '앞으로 코스피200이 얼마나 출렁일지'예요. 16으로 나누면 하루 예상 폭, 3.5로 나누면 한 달 예상 폭이에요(대략 3번 중 2번은 이 안에서 움직여요). 2010년 이후 평균이 20쯤이고, 30을 넘으면 출렁이는 장, 50을 넘으면 금융위기·코로나 때 수준이에요.</p>
+    <p><b>외국인 한도</b>: 큰 외국인 자금은 '손실 한도 ÷ 변동성'만큼만 담아요(변동성 타깃팅). 그래서 VKOSPI가 오르면 팔고 싶지 않아도 기계적으로 줄이고, 내려가면 다시 담을 여유가 생겨요. 카드의 배율은 이 공식으로 계산한 거예요. 다만 변동성은 보통 바닥이 지나고 나서야 내려와서, 매수 시점 신호라기보다 '돌아오는 돈이 이어질지' 확인하는 용도예요.</p>
     <p>선물은 코스피200 선물의 정규장과 야간장을 합친 숫자예요. 야간장은 다음 날 아침에 확정돼서, 저녁에 본 최신 숫자는 아침에 조금 바뀔 수 있어요. 선물 ±500억, 현물 ±300억 안쪽은 중립으로 봐요.</p>
   </details>
 </div>
@@ -988,6 +1001,83 @@ fetch("watch.json?t=" + Date.now())
   })
   .catch(() => { /* watch.json이 아직 없으면 이 구역은 숨겨 둬요 */ });
 
+// ───────────────────────── VKOSPI ─────────────────────────
+function vkSpark(series){
+  // 최근 60거래일 선 + 20·30·50 기준선
+  const W = 340, H = 70, vals = series.map(x => x.v);
+  const lo = Math.min(15, ...vals), hi = Math.max(55, ...vals) * 1.05;
+  const y = v => H - (v - lo) / (hi - lo) * H;
+  const x = i => i / (vals.length - 1) * W;
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("class", "vk-spark");
+  [[20, "평상"], [30, "30"], [50, "50"]].forEach(([v, t]) => {
+    if(v < lo || v > hi) return;
+    const l = document.createElementNS(ns, "line");
+    l.setAttribute("x1", 0); l.setAttribute("x2", W); l.setAttribute("y1", y(v)); l.setAttribute("y2", y(v));
+    l.setAttribute("stroke", "var(--sub)"); l.setAttribute("stroke-dasharray", "3 4"); l.setAttribute("stroke-width", "1");
+    l.setAttribute("opacity", "0.5"); svg.appendChild(l);
+    const tx = document.createElementNS(ns, "text");
+    tx.setAttribute("x", 2); tx.setAttribute("y", y(v) - 2); tx.setAttribute("font-size", "9");
+    tx.setAttribute("fill", "var(--sub)"); tx.textContent = t; svg.appendChild(tx);
+  });
+  const path = document.createElementNS(ns, "polyline");
+  path.setAttribute("points", vals.map((v, i) => x(i) + "," + y(v)).join(" "));
+  path.setAttribute("fill", "none"); path.setAttribute("stroke", "var(--text, currentColor)"); path.setAttribute("stroke-width", "2");
+  path.setAttribute("vector-effect", "non-scaling-stroke");
+  svg.appendChild(path);
+  return svg;
+}
+
+function drawVkospi(v){
+  const card = document.getElementById("vkCard");
+  const top = el("div", "vk-top");
+  top.append(el("span", "big", v.value.toFixed(2)),
+             el("span", "amt " + cls(-v.chg1), (v.chg1 > 0 ? "+" : "") + v.chg1.toFixed(2)),
+             el("span", "vk-zone " + v.zone, v.zone_label));
+  card.appendChild(top);
+  card.appendChild(el("div", "fut-mean",
+    "하루 예상 폭 ±" + v.daily_range + "% · 한 달 ±" + v.month_range + "% · 1년 중 " + v.pct_rank + "% 위치"));
+
+  if(v.kospi_chg !== null && v.kospi_chg !== undefined){
+    const l = el("div", "fut-line");
+    l.append(prettyDate(v.date).slice(5) + " 코스피 " + (v.kospi_chg > 0 ? "+" : "") + v.kospi_chg.toFixed(2) + "% → ");
+    l.appendChild(el("b", v.kospi_in_range ? "" : cls(v.kospi_chg),
+      v.kospi_in_range ? "예상 폭 안 (평소 출렁임)" : "예상 폭 밖 (큰 움직임)"));
+    card.appendChild(l);
+  }
+
+  card.appendChild(vkSpark(v.series));
+  const cap = el("div", "w-cap");
+  cap.append(el("span", "", prettyDate(v.series[0].date).slice(5)), el("span", "", "최근 60거래일"),
+             el("span", "", prettyDate(v.series[v.series.length - 1].date).slice(5)));
+  card.appendChild(cap);
+
+  const grid = el("div", "fut-grid"); grid.style.marginTop = "10px";
+  [["5일 변화", v.chg5], ["20일 변화", v.chg20]].forEach(([k, n]) => {
+    const b = el("div", "idx");
+    b.append(el("div", "k", k), el("div", "v " + cls(-n), (n > 0 ? "+" : "") + n.toFixed(2)));
+    grid.appendChild(b);
+  });
+  const b1 = el("div", "idx");
+  b1.append(el("div", "k", "외국인 한도(20 대비)"), el("div", "v", Math.round(v.cap_vs20 * 100) + "%"),
+            el("div", "c", "같은 손실 한도일 때"));
+  const b2 = el("div", "idx");
+  b2.append(el("div", "k", "VKOSPI가 30이 되면"), el("div", "v buy", "한도 " + v.cap_if30.toFixed(1) + "배"),
+            el("div", "c", "52주 " + v.low52 + " ~ " + v.high52));
+  grid.append(b1, b2);
+  card.appendChild(grid);
+
+  if(v.note){
+    const n = el("div", "vk-note");
+    n.appendChild(el("b", {good:"buy", bad:"sell", warn:"", "":""}[v.note[0]] || "", "외국인 5일 현물 × VKOSPI: "));
+    n.append(v.note[1]);
+    card.appendChild(n);
+  }
+  card.hidden = false;
+}
+
 // ───────────────────────── 외국인 현물·선물 ─────────────────────────
 const FUT_CLS = {both_buy:"buy", both_sell:"sell", fut_only:"", hedge:"", mixed:""};
 const FUT_SHORT = {both_buy:"동시 매수", both_sell:"동시 매도", fut_only:"선물만 매수", hedge:"헤지 모양", mixed:"중립"};
@@ -997,6 +1087,7 @@ function eokText(v){ return v === null || v === undefined ? "-" : fmt(v); }
 fetch("futures.json?t=" + Date.now())
   .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
   .then(d => {
+    if(d.vkospi) drawVkospi(d.vkospi);
     const card = document.getElementById("futCard");
     const sm = d.summary;
     const last = d.days[d.days.length - 1];
