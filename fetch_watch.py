@@ -23,7 +23,8 @@ import json
 import os
 from datetime import datetime, timedelta
 
-DAYS = 20          # 몇 거래일치를 볼지
+DAYS = 20          # 몇 거래일치를 보여 줄지
+VOL_DAYS = 60      # 변동성은 이만큼의 거래일로도 계산해요(20일과 60일 두 가지)
 KEEP_LEND = 60     # 대차잔고 기록을 며칠치까지 쌓아 둘지
 EOK = 1e8
 
@@ -37,6 +38,28 @@ def load(path, default=None):
     except ValueError:      # 파일이 깨져 있으면 없는 셈 쳐요
         print("  읽기 실패, 건너뜀:", path)
         return default
+
+
+def last_closed_day():
+    """수급 확정치가 나오는 저녁 6시(한국시간) 전이면 오늘은 '아직 진행 중'으로 보고 빼요.
+    GitHub 예약 실행이 늦어져 장중에 돌면, 반쪽짜리 오늘 숫자가 들어가는 걸 막으려는 거예요."""
+    from datetime import timezone
+    now = datetime.now(timezone(timedelta(hours=9)))
+    if now.hour < 18:
+        now -= timedelta(days=1)
+    return now.strftime("%Y%m%d")
+
+
+def realized_vol(closes, n):
+    """최근 n일 일간 수익률로 계산한 연간 변동성(%). VKOSPI와 같은 단위라 나란히 비교할 수 있어요."""
+    import math
+    c = closes[-(n + 1):]
+    if len(c) < n + 1:
+        return None
+    rets = [math.log(c[i] / c[i - 1]) for i in range(1, len(c))]
+    mean = sum(rets) / len(rets)
+    var = sum((r - mean) ** 2 for r in rets) / (len(rets) - 1)
+    return round(math.sqrt(var) * math.sqrt(250) * 100, 1)
 
 
 def side(v, flat=0):
@@ -56,15 +79,16 @@ def streak(values):
     return n * s
 
 
-def fetch_stock(ticker):
+def fetch_stock(ticker, end_day):
+    """(최근 DAYS일 행 목록, 변동성 계산용 종가 목록)을 돌려줘요."""
     from pykrx import stock
 
-    end = datetime.now()
-    start = (end - timedelta(days=DAYS * 2 + 15)).strftime("%Y%m%d")
-    end = end.strftime("%Y%m%d")
+    end = datetime.strptime(end_day, "%Y%m%d")
+    start = (end - timedelta(days=VOL_DAYS * 2 + 20)).strftime("%Y%m%d")
 
-    price = stock.get_market_ohlcv_by_date(start, end, ticker).tail(DAYS)
-    flow = stock.get_market_trading_value_by_date(start, end, ticker, detail=True)
+    price_all = stock.get_market_ohlcv_by_date(start, end_day, ticker)
+    price = price_all.tail(DAYS)
+    flow = stock.get_market_trading_value_by_date(start, end_day, ticker, detail=True)
 
     rows = []
     for idx, p in price.iterrows():
@@ -78,7 +102,26 @@ def fetch_stock(ticker):
             "foreign": round(float(foreign) / EOK, 1),   # float(): pandas 숫자를 JSON 으로 저장할 수 있게
             "pension": round(float(pension) / EOK, 1),
         })
-    return rows
+    return rows, [float(c) for c in price_all["종가"].tolist()]
+
+
+def kospi_vol(end_day):
+    """코스피 지수의 20일 실현 변동성(%). 종목 변동성이 시장의 몇 배인지 보려고요."""
+    from pykrx import stock
+    end = datetime.strptime(end_day, "%Y%m%d")
+    start = (end - timedelta(days=60)).strftime("%Y%m%d")
+    df = stock.get_index_ohlcv_by_date(start, end_day, "1001")   # 1001 = 코스피
+    return realized_vol([float(c) for c in df["종가"].tolist()], 20)
+
+
+def move_label(chg, vol20):
+    """오늘 등락이 평소 하루 폭(20일 변동성 ÷ 16)의 몇 배인지로 말해요."""
+    if not vol20:
+        return None, None
+    daily = vol20 / 15.8
+    ratio = abs(chg) / daily if daily else 0
+    label = "평소 범위" if ratio < 1 else ("큰 편" if ratio < 2 else "이례적")
+    return round(ratio, 1), label
 
 
 def main():
@@ -88,11 +131,19 @@ def main():
     old = load("watch.json", {"stocks": []})
     old_lend = {s["ticker"]: s.get("lend_hist", []) for s in old.get("stocks", [])}
 
+    end_day = last_closed_day()
+    print("기준: ", end_day, "까지 확정된 날만 써요")
+    try:
+        mkt_vol = kospi_vol(end_day)
+    except Exception as e:
+        print("  코스피 변동성 계산 실패(건너뜀):", e)
+        mkt_vol = None
+
     out = []
     for w in wl["stocks"]:
         t = w["ticker"]
         print("수집:", t, w.get("name"))
-        rows = fetch_stock(t)
+        rows, all_closes = fetch_stock(t, end_day)
         if not rows:
             print("  자료 없음, 건너뜀")
             continue
@@ -129,8 +180,14 @@ def main():
             {"label": "종가가 5일 평균 위", "ok": bool(closes[-1] > ma5)},
         ]
 
+        vol20, vol60 = realized_vol(all_closes, 20), realized_vol(all_closes, VOL_DAYS)
+        ratio, mlabel = move_label(rows[-1]["chg"], vol20)
+        vol = {"v20": vol20, "v60": vol60, "daily": round(vol20 / 15.8, 1) if vol20 else None,
+               "kospi20": mkt_vol, "vs_kospi": round(vol20 / mkt_vol, 1) if vol20 and mkt_vol else None,
+               "move_ratio": ratio, "move_label": mlabel}
+
         out.append({
-            "ticker": t, "name": w.get("name", t), "note": w.get("note", ""),
+            "ticker": t, "vol": vol, "name": w.get("name", t), "note": w.get("note", ""),
             "close": closes[-1], "chg": rows[-1]["chg"],
             "ret20": round((closes[-1] / closes[0] - 1) * 100, 1) if closes[0] else None,
             "status": status[0], "status_label": status[1], "pressure": int(pressure),

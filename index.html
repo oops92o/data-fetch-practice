@@ -223,6 +223,8 @@
     <p><b>상태</b>는 파는 힘 세 가지로 정해요: 외국인 5일 순매도, 연기금 5일 순매도, 대차잔고 증가(공매도 대기). 셋 다면 <b class="sell">파는 힘 우세</b>, 하나도 없으면 <b class="buy">사는 힘 우세</b>, 그 사이는 <b>엇갈림</b>이에요.</p>
     <p><b>회복 신호</b>는 파는 힘이 풀리는지 보는 체크리스트예요. 하나씩 켜지기 시작하면 압력이 약해지는 중이고, 넷 다 켜지면 흐름이 바뀌었다고 볼 만해요.</p>
     <p>막대는 최근 20거래일 외국인+연기금 순매수 합계예요. 빨강은 순매수, 파랑은 순매도예요. 대차잔고는 하루 늦게 나오는 자료라 수급보다 하루 전 기준이에요.</p>
+    <p><b>변동성(20일)</b>은 최근 20거래일 하루 등락으로 계산한 연간 출렁임이에요. VKOSPI와 같은 단위라 나란히 볼 수 있어요. 16으로 나누면 하루 평소 폭이에요. 마지막 날 등락이 평소 폭의 1배 안이면 '평소 범위', 2배 넘으면 '이례적'이라 뉴스나 수급 변화를 확인해 볼 만해요.</p>
+    <p>수급 확정치는 저녁 6시쯤 나와서, 그 전에 돌면 오늘은 빼고 전날까지만 보여 줘요.</p>
     <p>종목을 더하거나 빼려면 저장소의 <code>watchlist.json</code>을 고치면 돼요.</p>
   </details>
 </div>
@@ -898,6 +900,22 @@ function drawWatch(x){
 
   card.appendChild(el("div", "w-status " + (x.status === "mixed" ? "" : x.status), x.status_label));
   card.appendChild(el("div", "w-sub", "파는 힘 " + x.pressure + "/3 · 20일 주가 " + pctText(x.ret20)));
+
+  // 변동성: 이 종목이 평소 하루에 얼마나 출렁이는지, 마지막 날 움직임이 그 몇 배인지
+  if(x.vol && x.vol.v20){
+    const v = x.vol;
+    const vl = el("div", "fut-line");
+    vl.append("변동성(20일) " + v.v20 + "%" + (v.vs_kospi ? " · 코스피의 " + v.vs_kospi + "배" : "") +
+              " · 하루 평소 폭 ±" + v.daily + "%");
+    card.appendChild(vl);
+    if(v.move_label){
+      const ml = el("div", "fut-line");
+      const last = x.days[x.days.length - 1];
+      ml.append(prettyDate(last.date).slice(5) + " " + (last.chg > 0 ? "+" : "") + last.chg.toFixed(1) + "% → 평소 폭의 " + v.move_ratio + "배, ");
+      ml.appendChild(el("b", v.move_label === "이례적" ? cls(last.chg) : "", v.move_label));
+      card.appendChild(ml);
+    }
+  }
 
   if(x.rules && x.rules.length){
     x.rules.forEach(r => card.appendChild(el("div", "w-rule " + (x.rule_side === "up" ? "buy" : "sell"), "· 수급 포착: " + r)));

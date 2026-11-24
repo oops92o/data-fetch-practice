@@ -74,13 +74,23 @@ def spot_by_day(days):
     return out
 
 
+def last_closed_day():
+    """수급 확정치가 나오는 저녁 6시(한국시간) 전이면 오늘은 '아직 진행 중'으로 보고 빼요.
+    GitHub 예약 실행이 늦어져 장중에 돌면, 반쪽짜리 오늘 숫자가 들어가는 걸 막으려는 거예요."""
+    from datetime import timezone
+    now = datetime.now(timezone(timedelta(hours=9)))
+    if now.hour < 18:
+        now -= timedelta(days=1)
+    return now.strftime("%Y%m%d")
+
+
 def recent_trading_days(n):
     """코스피 현물 거래 기록에서 최근 n개 거래일을 뽑아요."""
     from pykrx import stock
 
-    today = datetime.now()
-    start = (today - timedelta(days=n * 2 + 20)).strftime("%Y%m%d")
-    df = stock.get_market_trading_value_by_date(start, today.strftime("%Y%m%d"), "KOSPI")
+    end = last_closed_day()
+    start = (datetime.strptime(end, "%Y%m%d") - timedelta(days=n * 2 + 20)).strftime("%Y%m%d")
+    df = stock.get_market_trading_value_by_date(start, end, "KOSPI")
     return [d.strftime("%Y%m%d") for d in df.index][-n:]
 
 
