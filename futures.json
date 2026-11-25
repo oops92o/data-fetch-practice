@@ -181,6 +181,16 @@
    "bad",
    "변동성↑ → 한도 축소 → 매도의 악순환 구간이에요"
   ],
+  "turn": {
+   "peak": 65.17,
+   "peak_date": "20261106",
+   "drop": -10.3,
+   "days_since": 12,
+   "code": "turn",
+   "label": "꺾임 확인 (고점 대비 10% 이상 하락)",
+   "crosses": [],
+   "next_line": 50
+  },
   "series": [
    {
     "date": "20260827",
