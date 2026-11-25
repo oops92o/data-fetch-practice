@@ -36,6 +36,11 @@ SOFT = 5.0            # 5일 변화가 ±5% 이상이면 '최근' 신호
 EOK = 1e8
 KST = timezone(timedelta(hours=9))
 
+# 일별 기록 (lending_history.json): 종목을 누르면 대차잔고와 주가를 겹쳐 보여 주는 데 써요.
+HIST_FILE = "lending_history.json"
+HIST_DAYS = 60        # 최근 몇 거래일을 쌓아 둘지
+HIST_MIN_EOK = 100    # 기록 기간 중 잔고가 한 번이라도 이 금액(억) 이상이었던 종목만 기록해요 (파일 크기 때문)
+
 
 # ── 1. API 부르기 ──────────────────────────────────────────────────
 def service_key():
@@ -225,6 +230,83 @@ def build(snap, days):
     }
 
 
+# ── 4. 일별 기록 쌓기 ──────────────────────────────────────────────
+def load_history():
+    """지난번에 저장한 기록을 {날짜: {종목코드: (잔고 주식 수, 종가)}} 모양으로 바꿔 읽어요."""
+    if not os.path.exists(HIST_FILE):
+        return {}, {}
+    try:
+        with open(HIST_FILE, encoding="utf-8") as f:
+            h = json.load(f)
+    except (ValueError, OSError):
+        return {}, {}
+    cols = {d: {} for d in h.get("dates", [])}
+    for t, bals in h.get("bal", {}).items():
+        pxs = h.get("px", {}).get(t, [])
+        for i, d in enumerate(h.get("dates", [])):
+            b = bals[i] if i < len(bals) else None
+            p = pxs[i] if i < len(pxs) else None
+            if b is not None and p is not None:
+                cols[d][t] = (b, p)
+    return cols, h.get("names", {})
+
+
+def snap_to_col(day_snap):
+    """하루치 원자료를 {종목코드: (잔고 주식 수, 종가)} 로 줄여요. 종가 = 잔고 금액 ÷ 잔고 주식 수."""
+    col = {}
+    for t, x in day_snap.items():
+        if x["bal"] > 0 and x["bal_amt"] > 0:
+            col[t] = (int(round(x["bal"])), int(round(x["bal_amt"] / x["bal"])))
+    return col
+
+
+def build_history(cols, names):
+    """날짜별 자료를 종목별 줄 맞춤 배열로 바꿔요. 없는 날은 null 이에요."""
+    dates = sorted(cols)[-HIST_DAYS:]
+    keep = set()
+    for d in dates:
+        for t, (b, p) in cols[d].items():
+            if b * p >= HIST_MIN_EOK * EOK:
+                keep.add(t)
+    bal, px = {}, {}
+    for t in sorted(keep):
+        bal[t] = [cols[d][t][0] if t in cols[d] else None for d in dates]
+        px[t] = [cols[d][t][1] if t in cols[d] else None for d in dates]
+    return {
+        "version": 1,
+        "dates": dates,
+        "min_eok": HIST_MIN_EOK,
+        "names": {t: names.get(t, t) for t in sorted(keep)},
+        "bal": bal,   # 대차잔고 주식 수
+        "px": px,     # 그날 종가 (원)
+    }
+
+
+def update_history(snap, days):
+    """이미 받은 날은 다시 받지 않고, 비어 있는 날만 새로 받아 기록을 채워요.
+    처음 한 번은 60일을 다 받아야 해서 몇 분 더 걸려요."""
+    cols, names = load_history()
+    for d, day_snap in snap.items():          # 이번에 이미 받은 날은 그대로 써요
+        cols[d] = snap_to_col(day_snap)
+        names.update({t: x["name"] for t, x in day_snap.items()})
+
+    wanted = sorted(find_trading_days(HIST_DAYS))
+    missing = [d for d in wanted if d not in cols]
+    if missing:
+        print(f"  일별 기록: 비어 있는 {len(missing)}일을 받아요 ({missing[0]} ~ {missing[-1]})")
+    for d in missing:
+        day_snap = fetch_day(d)
+        cols[d] = snap_to_col(day_snap)
+        names.update({t: x["name"] for t, x in day_snap.items()})
+        print(f"    {d}: {len(cols[d])}종목")
+
+    cols = {d: cols[d] for d in wanted if d in cols}
+    hist = build_history(cols, names)
+    with open(HIST_FILE, "w", encoding="utf-8") as f:
+        json.dump(hist, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"일별 기록 저장: {len(hist['dates'])}거래일, {len(hist['bal'])}종목")
+
+
 def main():
     print("자료가 있는 거래일 찾는 중...")
     days = find_trading_days(LONG + 1)
@@ -242,6 +324,14 @@ def main():
     with open("lending.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
     print("저장 완료:", data["date"], f"({len(data['stocks'])}종목)")
+
+    # 일별 기록은 '있으면 좋은' 자료라, 실패해도 위 lending.json 은 그대로 둬요.
+    try:
+        update_history(snap, days)
+    except SystemExit:
+        raise
+    except Exception as e:
+        print("일별 기록 단계를 건너뜁니다:", e)
 
 
 if __name__ == "__main__":
