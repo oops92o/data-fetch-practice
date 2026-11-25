@@ -86,7 +86,12 @@ def fetch_stock(ticker, end_day):
     end = datetime.strptime(end_day, "%Y%m%d")
     start = (end - timedelta(days=VOL_DAYS * 2 + 20)).strftime("%Y%m%d")
 
-    price_all = stock.get_market_ohlcv_by_date(start, end_day, ticker)
+    # adjusted=False: 한국거래소 공식 시세를 써요. (기본값 True 는 네이버 차트 자료를 쓰는데,
+    #                 실제 종가와 어긋나는 일이 있어서 바꿨어요. 대신 액면분할이 있으면 그 전후가 끊겨 보여요.)
+    price_all = stock.get_market_ohlcv_by_date(start, end_day, ticker, adjusted=False)
+    price_all = price_all[price_all["종가"] > 0]          # 거래정지일 등 0원 행은 빼요
+    # 등락률은 받은 종가로 직접 계산해요 (전날 종가 대비 %)
+    price_all = price_all.assign(등락률=price_all["종가"].pct_change() * 100)
     price = price_all.tail(DAYS)
     flow = stock.get_market_trading_value_by_date(start, end_day, ticker, detail=True)
 
@@ -98,7 +103,7 @@ def fetch_stock(ticker, end_day):
         rows.append({
             "date": idx.strftime("%Y%m%d"),
             "close": int(p["종가"]),
-            "chg": round(float(p.get("등락률", 0)), 2),
+            "chg": round(float(p["등락률"]), 2) if p["등락률"] == p["등락률"] else 0.0,   # 첫날(NaN)은 0
             "foreign": round(float(foreign) / EOK, 1),   # float(): pandas 숫자를 JSON 으로 저장할 수 있게
             "pension": round(float(pension) / EOK, 1),
         })
