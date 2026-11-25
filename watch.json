@@ -5,19 +5,19 @@
   {
    "ticker": "009150",
    "vol": {
-    "v20": 124.1,
-    "v60": 97.7,
-    "daily": 7.9,
+    "v20": 117.8,
+    "v60": 88.0,
+    "daily": 7.5,
     "kospi20": 59.1,
-    "vs_kospi": 2.1,
-    "move_ratio": 0.4,
-    "move_label": "평소 범위"
+    "vs_kospi": 2.0,
+    "move_ratio": 1.4,
+    "move_label": "큰 편"
    },
    "name": "삼성전기",
    "note": "보유",
-   "close": 820000,
-   "chg": 2.89,
-   "ret20": -37.6,
+   "close": 858000,
+   "chg": 10.28,
+   "ret20": -34.3,
    "status": "mixed",
    "status_label": "엇갈림",
    "pressure": 2,
@@ -82,141 +82,141 @@
    "days": [
     {
      "date": "20261028",
-     "close": 1315000,
-     "chg": 7.26,
+     "close": 1306000,
+     "chg": 8.74,
      "foreign": -115.6,
      "pension": -16.0
     },
     {
      "date": "20261029",
-     "close": 1282000,
-     "chg": -2.51,
+     "close": 1293000,
+     "chg": -1.0,
      "foreign": 969.9,
      "pension": 25.0
     },
     {
      "date": "20261030",
-     "close": 1166000,
-     "chg": -9.05,
+     "close": 1196000,
+     "chg": -7.5,
      "foreign": -2214.1,
      "pension": 214.3
     },
     {
      "date": "20261102",
-     "close": 1206000,
-     "chg": 3.43,
+     "close": 1193000,
+     "chg": -0.25,
      "foreign": -766.5,
      "pension": 46.8
     },
     {
      "date": "20261103",
-     "close": 1126000,
-     "chg": -6.63,
+     "close": 1105000,
+     "chg": -7.38,
      "foreign": -1831.2,
      "pension": -150.1
     },
     {
      "date": "20261104",
-     "close": 1119000,
-     "chg": -0.62,
+     "close": 1115000,
+     "chg": 0.9,
      "foreign": -1175.3,
      "pension": -26.7
     },
     {
      "date": "20261105",
-     "close": 950000,
-     "chg": -15.1,
+     "close": 944000,
+     "chg": -15.34,
      "foreign": -3473.7,
      "pension": -1344.5
     },
     {
      "date": "20261106",
-     "close": 894000,
-     "chg": -5.89,
+     "close": 870000,
+     "chg": -7.84,
      "foreign": -532.5,
      "pension": 272.7
     },
     {
      "date": "20261109",
-     "close": 815000,
-     "chg": -8.84,
+     "close": 843000,
+     "chg": -3.1,
      "foreign": -277.8,
      "pension": 127.0
     },
     {
      "date": "20261110",
-     "close": 870000,
-     "chg": 6.75,
+     "close": 882000,
+     "chg": 4.63,
      "foreign": 631.7,
      "pension": 14.5
     },
     {
      "date": "20261111",
-     "close": 944000,
-     "chg": 8.51,
+     "close": 923000,
+     "chg": 4.65,
      "foreign": 360.4,
      "pension": 155.9
     },
     {
      "date": "20261112",
-     "close": 873000,
-     "chg": -7.52,
+     "close": 886000,
+     "chg": -4.01,
      "foreign": -120.8,
      "pension": -503.8
     },
     {
      "date": "20261113",
-     "close": 864000,
-     "chg": -1.03,
+     "close": 855000,
+     "chg": -3.5,
      "foreign": -472.8,
      "pension": -358.5
     },
     {
      "date": "20261116",
-     "close": 779000,
-     "chg": -9.84,
+     "close": 785000,
+     "chg": -8.19,
      "foreign": -995.0,
      "pension": -665.1
     },
     {
      "date": "20261117",
-     "close": 748000,
-     "chg": -3.98,
+     "close": 754000,
+     "chg": -3.95,
      "foreign": -51.4,
      "pension": -244.0
     },
     {
      "date": "20261118",
-     "close": 820000,
-     "chg": 9.63,
+     "close": 810000,
+     "chg": 7.43,
      "foreign": -96.2,
      "pension": 42.8
     },
     {
      "date": "20261119",
-     "close": 883000,
-     "chg": 7.68,
+     "close": 885000,
+     "chg": 9.26,
      "foreign": -159.4,
      "pension": 274.0
     },
     {
      "date": "20261120",
-     "close": 767000,
-     "chg": -13.14,
+     "close": 774000,
+     "chg": -12.54,
      "foreign": -2424.9,
      "pension": -9.2
     },
     {
      "date": "20261123",
-     "close": 797000,
-     "chg": 3.91,
+     "close": 778000,
+     "chg": 0.52,
      "foreign": 32.8,
      "pension": 80.4
     },
     {
      "date": "20261124",
-     "close": 820000,
-     "chg": 2.89,
+     "close": 858000,
+     "chg": 10.28,
      "foreign": 780.6,
      "pension": 331.3
     }
