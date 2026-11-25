@@ -1,38 +1,21 @@
 {
  "version": 1,
- "date": "20261124",
+ "date": "20261125",
  "product": "코스피200 선물 (정규+야간)",
  "settings": {
   "fut_flat": 500,
   "spot_flat": 300
  },
  "summary": {
-  "quad": "both_buy",
-  "label": "현물·선물 동시 매수",
-  "meaning": "상승 쪽 확신이 커요",
-  "fut_streak": 2,
-  "fut_5d": 8764.8,
-  "spot_5d": -12203.8,
-  "follow": {
-   "prev_date": "20261123",
-   "result": "followed"
-  }
+  "quad": "fut_only",
+  "label": "현물 매도 · 선물 매수",
+  "meaning": "반등 베팅·헤지 풀기·차익거래 중 하나예요. 다음 날 현물이 따라오는지 보세요",
+  "fut_streak": 3,
+  "fut_5d": 16892.3,
+  "spot_5d": -27752.8,
+  "follow": null
  },
  "days": [
-  {
-   "date": "20261111",
-   "fut_foreign": -7941.0,
-   "fut_foreign_qty": -3805,
-   "fut_inst": 6273.3,
-   "fut_indiv": 1292.8,
-   "spot_foreign": 6729.2,
-   "spot_inst": -5034.1,
-   "spot_indiv": -7144.9,
-   "quad": "hedge",
-   "label": "현물 매수 · 선물 매도",
-   "vkospi": 52.76,
-   "kospi_chg": 2.6
-  },
   {
    "date": "20261112",
    "fut_foreign": 925.8,
@@ -158,22 +141,36 @@
    "label": "현물·선물 동시 매수",
    "vkospi": 58.45,
    "kospi_chg": 6.32
+  },
+  {
+   "date": "20261125",
+   "fut_foreign": 7623.0,
+   "fut_foreign_qty": 4245,
+   "fut_inst": -7897.5,
+   "fut_indiv": -75.9,
+   "spot_foreign": -18192.6,
+   "spot_inst": 4539.5,
+   "spot_indiv": 13521.0,
+   "quad": "fut_only",
+   "label": "현물 매도 · 선물 매수",
+   "vkospi": 58.52,
+   "kospi_chg": -6.16
   }
  ],
  "vkospi": {
-  "date": "20261124",
-  "value": 58.45,
+  "date": "20261125",
+  "value": 58.52,
   "zone": "extreme",
   "zone_label": "금융위기급",
-  "chg1": 2.62,
-  "chg5": 4.81,
-  "chg20": 7.12,
+  "chg1": 0.07,
+  "chg5": 3.23,
+  "chg20": 6.67,
   "high52": 96.94,
   "low52": 25.05,
   "pct_rank": 63,
   "daily_range": 3.7,
   "month_range": 16.9,
-  "kospi_chg": 6.32,
+  "kospi_chg": -6.16,
   "kospi_in_range": false,
   "cap_vs20": 0.34,
   "cap_if30": 1.95,
@@ -184,18 +181,14 @@
   "turn": {
    "peak": 65.17,
    "peak_date": "20261106",
-   "drop": -10.3,
-   "days_since": 12,
+   "drop": -10.2,
+   "days_since": 13,
    "code": "turn",
    "label": "꺾임 확인 (고점 대비 10% 이상 하락)",
    "crosses": [],
    "next_line": 50
   },
   "series": [
-   {
-    "date": "20260827",
-    "v": 53.01
-   },
    {
     "date": "20260828",
     "v": 50.08
@@ -431,15 +424,19 @@
    {
     "date": "20261124",
     "v": 58.45
+   },
+   {
+    "date": "20261125",
+    "v": 58.52
    }
   ]
  },
  "corr": {
   "since": "20261001",
-  "end": "20261124",
+  "end": "20261125",
   "level": 0.97,
   "daily20": {
-   "r": 0.73,
+   "r": 0.71,
    "hit": 70,
    "n": 20
   },
@@ -449,12 +446,13 @@
    "n": 60
   },
   "lead": {
-   "r": 0.2,
+   "r": 0.14,
    "hit": 60,
    "n": 60
   },
   "notes": [
-   "하루 단위로도 외국인이 시장을 끌고 가는 장이에요"
+   "하루 단위로도 외국인이 시장을 끌고 가는 장이에요",
+   "오늘 외국인 수급으로 내일 코스피를 맞히기는 어려워요"
   ]
  }
 }
