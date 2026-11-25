@@ -264,6 +264,41 @@ def corr_block(end_day):
         return None
 
 
+VK_LINES = [60, 50, 40, 30, 20]   # 통과를 지켜볼 기준선
+
+
+def vk_turn(vk):
+    """VKOSPI가 고점에서 얼마나 꺾였는지, 최근 어떤 선을 위·아래로 통과했는지."""
+    vals = [v for _, v in vk]
+    dates = [d for d, _ in vk]
+    now = vals[-1]
+    win = vals[-20:]
+    peak = max(win)
+    peak_i = len(vals) - len(win) + win.index(peak)
+    drop = round((now / peak - 1) * 100, 1)          # 20일 고점 대비 %
+    days_since = len(vals) - 1 - peak_i
+    if drop <= -20:
+        code, label = "calm", "뚜렷한 진정 (고점 대비 20% 이상 하락)"
+    elif drop <= -10:
+        code, label = "turn", "꺾임 확인 (고점 대비 10% 이상 하락)"
+    elif days_since <= 2:
+        code, label = "rising", "고점 부근 (공포가 커지는 중)"
+    else:
+        code, label = "flat", "고점 아래서 머무는 중 (아직 꺾였다고 보기 일러요)"
+
+    # 최근 10거래일 안에 기준선을 통과한 날
+    crosses = []
+    for i in range(max(1, len(vals) - 10), len(vals)):
+        for line in VK_LINES:
+            if vals[i - 1] >= line > vals[i]:
+                crosses.append({"date": dates[i], "line": line, "dir": "down"})
+            elif vals[i - 1] < line <= vals[i]:
+                crosses.append({"date": dates[i], "line": line, "dir": "up"})
+    below = max((line for line in VK_LINES if line < now), default=None)   # 아래로 내려가며 다음에 통과할 선
+    return {"peak": peak, "peak_date": dates[peak_i], "drop": drop, "days_since": days_since,
+            "code": code, "label": label, "crosses": crosses[-4:], "next_line": below}
+
+
 def vkospi_block(rows):
     """VKOSPI 카드에 들어갈 숫자들. 실패해도 나머지 카드는 살아 있게 None 을 돌려줘요."""
     try:
@@ -295,6 +330,7 @@ def vkospi_block(rows):
             # 변동성 타깃팅: 같은 손실 한도라면 투자 한도는 변동성에 반비례해요
             "cap_vs20": round(20 / now, 2), "cap_if30": round(now / 30, 2),
             "note": note,
+            "turn": vk_turn(vk),
             "series": [{"date": d, "v": v} for d, v in vk[-60:]],
         }
     except Exception as e:

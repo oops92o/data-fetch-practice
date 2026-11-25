@@ -177,6 +177,13 @@
   .w-bars span{flex:1; display:block; border-radius:2px;}
   .w-cap{font-size:11.5px; color:var(--sub); display:flex; justify-content:space-between;}
 
+  /* 비중 계산기 */
+  .calc{margin-top:10px; padding:10px; border-radius:10px; background:var(--line); font-size:13px;}
+  .calc label{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;}
+  .calc input{width:110px; padding:5px 8px; border:1px solid var(--sub); border-radius:6px; font-size:14px;
+              text-align:right; background:var(--card, #fff); color:inherit;}
+  .calc .res{margin-top:4px; line-height:1.6;}
+
   /* VKOSPI 카드 */
   .vk-top{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
   .vk-top .big{font-size:26px; font-weight:800; font-variant-numeric:tabular-nums;}
@@ -254,6 +261,7 @@
     <p><b>현물 매도 · 선물 매수</b>: 세 가지 중 하나예요. ① 반등에 먼저 거는 것 ② 걸어 둔 하락 보험(선물 매도)을 푸는 것 ③ 선물이 현물보다 쌀 때 나오는 차익거래. 다음 날 현물 매수가 따라오면 ①일 가능성이 커져요. 카드의 '어제 선물 베팅 → 오늘 현물' 줄이 그걸 확인해 줘요.</p>
     <p><b>현물 매수 · 선물 매도</b>: 종목은 사면서 지수 하락은 막아 두는 헤지 모양이에요.</p>
     <p><b>VKOSPI</b>는 옵션 가격으로 거꾸로 계산한 '앞으로 코스피200이 얼마나 출렁일지'예요. 16으로 나누면 하루 예상 폭, 3.5로 나누면 한 달 예상 폭이에요(대략 3번 중 2번은 이 안에서 움직여요). 2010년 이후 평균이 20쯤이고, 30을 넘으면 출렁이는 장, 50을 넘으면 금융위기·코로나 때 수준이에요.</p>
+    <p><b>꺾임 신호</b>: 최근 20거래일 고점에서 10% 넘게 내려오면 '꺾임 확인', 20% 넘게면 '뚜렷한 진정'이에요. 60·50·40·30·20 선을 아래로 통과하는 날도 함께 적어 둬요. 공포의 정점은 지나고 나서야 알 수 있어서, 정점을 맞히기보다 꺾인 걸 확인하는 용도예요.</p>
     <p><b>외국인 한도</b>: 큰 외국인 자금은 '손실 한도 ÷ 변동성'만큼만 담아요(변동성 타깃팅). 그래서 VKOSPI가 오르면 팔고 싶지 않아도 기계적으로 줄이고, 내려가면 다시 담을 여유가 생겨요. 카드의 배율은 이 공식으로 계산한 거예요. 다만 변동성은 보통 바닥이 지나고 나서야 내려와서, 매수 시점 신호라기보다 '돌아오는 돈이 이어질지' 확인하는 용도예요.</p>
     <p><b>상관계수</b>는 두 숫자가 같이 움직이는 정도예요(+1 똑같이, 0 무관, −1 정반대). ① 누적은 외국인 누적 순매수 선과 코스피 지수 선을 비교한 거라, 둘 다 한 방향으로 흐르기만 해도 높게 나와요. ② 하루 비교가 "외국인이 산 날 올랐나"에 대한 진짜 답이고, '맞은 날'은 외국인 순매수와 코스피 방향이 같았던 날의 비율이에요. ③은 오늘 수급과 다음 날 등락을 비교한 거라, 이게 높아야 예측에 쓸 수 있어요. 같은 날 숫자는 누가 원인인지 알려 주지 않아요.</p>
     <p>선물은 코스피200 선물의 정규장과 야간장을 합친 숫자예요. 야간장은 다음 날 아침에 확정돼서, 저녁에 본 최신 숫자는 아침에 조금 바뀔 수 있어요. 선물 ±500억, 현물 ±300억 안쪽은 중립으로 봐요.</p>
@@ -904,6 +912,68 @@ function streakText(n){
   return " (" + Math.abs(n) + "일째 " + (n > 0 ? "순매수" : "순매도") + ")";
 }
 
+// ── 비중 계산기: 하루 견딜 금액 ÷ 하루 평소 폭 = 적당한 보유 금액 ──
+function store(key, val){
+  try{
+    if(val === undefined) return localStorage.getItem(key);
+    localStorage.setItem(key, val);
+  }catch(e){ return null; }   // 저장이 막힌 브라우저에서도 계산은 돼요
+}
+
+function won(manwon){
+  if(manwon >= 10000) return (manwon / 10000).toFixed(2).replace(/\.?0+$/, "") + "억 원";
+  return Math.round(manwon).toLocaleString("ko-KR") + "만 원";
+}
+
+function sizeCalc(x){
+  const box = el("div", "calc");
+  box.appendChild(el("b", "", "비중 계산기"));
+  const mk = (label, key, ph) => {
+    const lab = el("label", "", label);
+    const inp = document.createElement("input");
+    inp.type = "number"; inp.inputMode = "numeric"; inp.placeholder = ph;
+    inp.value = store(key) || "";
+    lab.appendChild(inp);
+    box.appendChild(lab);
+    return [inp, key];
+  };
+  const [risk, rk] = mk("하루 견딜 수 있는 금액(만 원)", "calc_risk", "예: 50");
+  const [hold, hk] = mk("지금 이 종목 보유 금액(만 원)", "calc_hold_" + x.ticker, "예: 800");
+  const res = el("div", "res");
+  box.appendChild(res);
+
+  const update = () => {
+    store(rk, risk.value); store(hk, hold.value);
+    res.innerHTML = "";
+    const r = parseFloat(risk.value), h = parseFloat(hold.value);
+    if(!(r > 0) || !x.vol || !x.vol.daily){ res.textContent = "견딜 금액을 넣으면 계산해요."; return; }
+    const daily = x.vol.daily / 100;
+    const fit = r / daily;
+    res.append("하루 평소 폭 ±" + x.vol.daily + "% 기준 적당한 보유: ");
+    res.appendChild(el("b", "", won(fit)));
+    if(h > 0){
+      res.appendChild(document.createElement("br"));
+      const swing = h * daily;
+      res.append("지금 보유로는 하루 평소 ±" + won(swing) + " 흔들려요 → ");
+      const ratio = h / fit;
+      res.appendChild(el("b", ratio > 1.2 ? "sell" : (ratio < 0.8 ? "buy" : ""),
+        ratio > 1.2 ? "견딜 금액보다 " + ratio.toFixed(1) + "배 커요"
+                    : ratio < 0.8 ? "여유가 있어요 (" + Math.round(ratio * 100) + "%)" : "알맞은 편이에요"));
+    }
+    // 시장 변동성이 내려가면 종목 변동성도 비슷한 비율로 줄어든다고 가정
+    if(window.VK_NOW && window.VK_NOW > 30){
+      const at30 = fit * window.VK_NOW / 30;
+      res.appendChild(document.createElement("br"));
+      res.append("VKOSPI가 30으로 내려오면(종목도 같은 비율로 잠잠해진다면): " + won(at30));
+    }
+  };
+  risk.addEventListener("input", update);
+  hold.addEventListener("input", update);
+  update();
+  box.appendChild(el("div", "w-cap", "숫자는 이 브라우저에만 저장돼요. 하루 평소 폭은 3번 중 2번쯤 그 안에서 움직이는 크기라, 더 크게 흔들리는 날도 있어요."));
+  return box;
+}
+
 function drawWatch(x){
   const card = el("div", "card");
   const top = el("div", "w-top");
@@ -981,6 +1051,8 @@ function drawWatch(x){
   }
   card.appendChild(grid);
 
+  card.appendChild(sizeCalc(x));
+
   const head = el("div", "w-tbl head");
   head.append(el("div", "", "날짜"), el("div", "", "등락"), el("div", "", "외국인"), el("div", "", "연기금"));
   card.appendChild(head);
@@ -1035,6 +1107,9 @@ function vkSpark(series){
 }
 
 function drawVkospi(v){
+  window.VK_NOW = v.value;
+  // 비중 계산기가 먼저 그려졌으면 VKOSPI 시나리오 줄을 붙이도록 다시 계산시켜요
+  document.querySelectorAll(".calc input").forEach(i => i.dispatchEvent(new Event("input")));
   const card = document.getElementById("vkCard");
   const top = el("div", "vk-top");
   top.append(el("span", "big", v.value.toFixed(2)),
@@ -1052,6 +1127,18 @@ function drawVkospi(v){
     card.appendChild(l);
   }
 
+  if(v.turn){
+    const t = v.turn;
+    const tl = el("div", "fut-line");
+    tl.append("20일 고점 " + t.peak.toFixed(2) + "(" + prettyDate(t.peak_date).slice(5) + ") 대비 " + pctText(t.drop) + " → ");
+    tl.appendChild(el("b", {calm:"buy", turn:"buy", rising:"sell", flat:""}[t.code], t.label));
+    card.appendChild(tl);
+    const parts = t.crosses.map(c => prettyDate(c.date).slice(5) + " " + c.line + (c.dir === "down" ? " 아래로↓" : " 위로↑"));
+    const cl = el("div", "w-sub");
+    cl.textContent = (parts.length ? "최근 선 통과: " + parts.join(" · ") : "최근 10일 동안 통과한 기준선 없음") +
+                     (t.next_line ? " / 다음에 볼 선: " + t.next_line + " 아래로" : "");
+    card.appendChild(cl);
+  }
   card.appendChild(vkSpark(v.series));
   const cap = el("div", "w-cap");
   cap.append(el("span", "", prettyDate(v.series[0].date).slice(5)), el("span", "", "최근 60거래일"),
