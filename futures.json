@@ -1,6 +1,6 @@
 {
  "version": 1,
- "date": "20261125",
+ "date": "20261126",
  "product": "코스피200 선물 (정규+야간)",
  "settings": {
   "fut_flat": 500,
@@ -10,26 +10,15 @@
   "quad": "fut_only",
   "label": "현물 매도 · 선물 매수",
   "meaning": "반등 베팅·헤지 풀기·차익거래 중 하나예요. 다음 날 현물이 따라오는지 보세요",
-  "fut_streak": 3,
-  "fut_5d": 16892.3,
-  "spot_5d": -27752.8,
-  "follow": null
+  "fut_streak": 4,
+  "fut_5d": 23171.7,
+  "spot_5d": -24552.8,
+  "follow": {
+   "prev_date": "20261125",
+   "result": "failed"
+  }
  },
  "days": [
-  {
-   "date": "20261112",
-   "fut_foreign": 925.8,
-   "fut_foreign_qty": 468,
-   "fut_inst": -1305.2,
-   "fut_indiv": 86.5,
-   "spot_foreign": 4121.3,
-   "spot_inst": -6526.4,
-   "spot_indiv": -2785.1,
-   "quad": "both_buy",
-   "label": "현물·선물 동시 매수",
-   "vkospi": 51.32,
-   "kospi_chg": -0.61
-  },
   {
    "date": "20261113",
    "fut_foreign": 5663.5,
@@ -155,23 +144,37 @@
    "label": "현물 매도 · 선물 매수",
    "vkospi": 58.52,
    "kospi_chg": -6.16
+  },
+  {
+   "date": "20261126",
+   "fut_foreign": 3455.1,
+   "fut_foreign_qty": 1878,
+   "fut_inst": -3182.2,
+   "fut_indiv": -226.7,
+   "spot_foreign": -885.6,
+   "spot_inst": 7535.1,
+   "spot_indiv": -10747.9,
+   "quad": "fut_only",
+   "label": "현물 매도 · 선물 매수",
+   "vkospi": 58.4,
+   "kospi_chg": 0.29
   }
  ],
  "vkospi": {
-  "date": "20261125",
-  "value": 58.52,
+  "date": "20261126",
+  "value": 58.4,
   "zone": "extreme",
   "zone_label": "금융위기급",
-  "chg1": 0.07,
-  "chg5": 3.23,
-  "chg20": 6.67,
+  "chg1": -0.12,
+  "chg5": 4.47,
+  "chg20": 6.98,
   "high52": 96.94,
   "low52": 25.05,
-  "pct_rank": 63,
+  "pct_rank": 62,
   "daily_range": 3.7,
   "month_range": 16.9,
-  "kospi_chg": -6.16,
-  "kospi_in_range": false,
+  "kospi_chg": 0.29,
+  "kospi_in_range": true,
   "cap_vs20": 0.34,
   "cap_if30": 1.95,
   "note": [
@@ -181,18 +184,14 @@
   "turn": {
    "peak": 65.17,
    "peak_date": "20261106",
-   "drop": -10.2,
-   "days_since": 13,
+   "drop": -10.4,
+   "days_since": 14,
    "code": "turn",
    "label": "꺾임 확인 (고점 대비 10% 이상 하락)",
    "crosses": [],
    "next_line": 50
   },
   "series": [
-   {
-    "date": "20260828",
-    "v": 50.08
-   },
    {
     "date": "20260831",
     "v": 46.05
@@ -428,25 +427,29 @@
    {
     "date": "20261125",
     "v": 58.52
+   },
+   {
+    "date": "20261126",
+    "v": 58.4
    }
   ]
  },
  "corr": {
   "since": "20261001",
-  "end": "20261125",
+  "end": "20261126",
   "level": 0.97,
   "daily20": {
-   "r": 0.71,
+   "r": 0.75,
    "hit": 70,
    "n": 20
   },
   "daily60": {
    "r": 0.7,
-   "hit": 75,
+   "hit": 73,
    "n": 60
   },
   "lead": {
-   "r": 0.14,
+   "r": 0.15,
    "hit": 60,
    "n": 60
   },
