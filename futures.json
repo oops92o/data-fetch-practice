@@ -1,38 +1,24 @@
 {
  "version": 1,
- "date": "20261126",
+ "date": "20261127",
  "product": "코스피200 선물 (정규+야간)",
  "settings": {
   "fut_flat": 500,
   "spot_flat": 300
  },
  "summary": {
-  "quad": "fut_only",
-  "label": "현물 매도 · 선물 매수",
-  "meaning": "반등 베팅·헤지 풀기·차익거래 중 하나예요. 다음 날 현물이 따라오는지 보세요",
-  "fut_streak": 4,
-  "fut_5d": 23171.7,
-  "spot_5d": -24552.8,
+  "quad": "hedge",
+  "label": "현물 매수 · 선물 매도",
+  "meaning": "종목은 사면서 지수 하락은 막아 두는 모양이에요",
+  "fut_streak": -1,
+  "fut_5d": 12839.1,
+  "spot_5d": -1972.2,
   "follow": {
-   "prev_date": "20261125",
-   "result": "failed"
+   "prev_date": "20261126",
+   "result": "followed"
   }
  },
  "days": [
-  {
-   "date": "20261113",
-   "fut_foreign": 5663.5,
-   "fut_foreign_qty": 2729,
-   "fut_inst": -5136.9,
-   "fut_indiv": -24.4,
-   "spot_foreign": -5419.2,
-   "spot_inst": -59.1,
-   "spot_indiv": 145.0,
-   "quad": "fut_only",
-   "label": "현물 매도 · 선물 매수",
-   "vkospi": 50.15,
-   "kospi_chg": -0.98
-  },
   {
    "date": "20261116",
    "fut_foreign": 3978.8,
@@ -158,25 +144,39 @@
    "label": "현물 매도 · 선물 매수",
    "vkospi": 58.4,
    "kospi_chg": 0.29
+  },
+  {
+   "date": "20261127",
+   "fut_foreign": -10981.8,
+   "fut_foreign_qty": -5802,
+   "fut_inst": 12041.9,
+   "fut_indiv": -1143.3,
+   "spot_foreign": 11624.6,
+   "spot_inst": 2190.0,
+   "spot_indiv": -17915.7,
+   "quad": "hedge",
+   "label": "현물 매수 · 선물 매도",
+   "vkospi": 59.7,
+   "kospi_chg": 4.34
   }
  ],
  "vkospi": {
-  "date": "20261126",
-  "value": 58.4,
+  "date": "20261127",
+  "value": 59.7,
   "zone": "extreme",
   "zone_label": "금융위기급",
-  "chg1": -0.12,
-  "chg5": 4.47,
-  "chg20": 6.98,
+  "chg1": 1.3,
+  "chg5": 6.52,
+  "chg20": 7.38,
   "high52": 96.94,
   "low52": 25.05,
-  "pct_rank": 62,
-  "daily_range": 3.7,
-  "month_range": 16.9,
-  "kospi_chg": 0.29,
-  "kospi_in_range": true,
+  "pct_rank": 65,
+  "daily_range": 3.78,
+  "month_range": 17.3,
+  "kospi_chg": 4.34,
+  "kospi_in_range": false,
   "cap_vs20": 0.34,
-  "cap_if30": 1.95,
+  "cap_if30": 1.99,
   "note": [
    "bad",
    "변동성↑ → 한도 축소 → 매도의 악순환 구간이에요"
@@ -184,18 +184,14 @@
   "turn": {
    "peak": 65.17,
    "peak_date": "20261106",
-   "drop": -10.4,
-   "days_since": 14,
-   "code": "turn",
-   "label": "꺾임 확인 (고점 대비 10% 이상 하락)",
+   "drop": -8.4,
+   "days_since": 15,
+   "code": "flat",
+   "label": "고점 아래서 머무는 중 (아직 꺾였다고 보기 일러요)",
    "crosses": [],
    "next_line": 50
   },
   "series": [
-   {
-    "date": "20260831",
-    "v": 46.05
-   },
    {
     "date": "20260901",
     "v": 44.03
@@ -431,25 +427,29 @@
    {
     "date": "20261126",
     "v": 58.4
+   },
+   {
+    "date": "20261127",
+    "v": 59.7
    }
   ]
  },
  "corr": {
   "since": "20261001",
-  "end": "20261126",
+  "end": "20261127",
   "level": 0.97,
   "daily20": {
-   "r": 0.75,
+   "r": 0.77,
    "hit": 70,
    "n": 20
   },
   "daily60": {
-   "r": 0.7,
-   "hit": 73,
+   "r": 0.71,
+   "hit": 75,
    "n": 60
   },
   "lead": {
-   "r": 0.15,
+   "r": 0.16,
    "hit": 60,
    "n": 60
   },
